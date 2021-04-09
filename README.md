@@ -1,10 +1,10 @@
 # SQLverine-authoring-tool
 <img src="images/sqlVerine-logo.png" width="400px" />
 
-SQLverine Authoring Tool ist ein Autorentool mit dem man Aufgaben für [SQLverine](https://github.com/Sulkar/SQLverine) erstellen kann.
+SQLverine authoring tool ist ein Autorentool mit dem man Aufgaben für [SQLverine](https://github.com/Sulkar/SQLverine) erstellen kann.
 
 ### Demo
-[SQLverine - Authoring Tool](https://sulkar.github.io/SQLverine-authoring-tool/)
+[SQLverine - authoring tool](https://sulkar.github.io/SQLverine-authoring-tool/)
 
 ## Lizenz
 Das Urheberrecht für diese Zusammenstellung liegt bei Richard Scheglmann und Benjamin Vötterle. Die Weitergabe und Nutzung dieser Inhalte und Software sowie die Veränderung ist gestattet, sofern die folgenden Bedingungen eingehalten werden: 
