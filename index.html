@@ -75,7 +75,7 @@
 
             <div class="col-2">
                 <h2>Inhalt</h2>
-                <select class="form-select" size="10" aria-label="select">
+                <select class="form-select" id="selectExercises" size="10" aria-label="select">
                     <option value="1">Einleitung</option>
                     <option value="2">Aufgabe 1</option>
                     <option value="2">Aufgabe 2</option>
@@ -161,6 +161,12 @@
 
 
 
+                        <button id="btnSave" class="btnSave d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
+                            speichern
+                        </button>
+                        <button id="btnNewExercise" class="btnNewExercise d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
+                            neue Übung
+                        </button>
 
                     </div>
                     <div class="tab-pane fade" id="nav-preview" role="tabpanel" aria-labelledby="nav-preview-tab">
@@ -182,7 +188,7 @@
 
         <script src="dist/sql-wasm.js"></script>
 
-        <script type="text/javascript" src="js/sql-editor.js"></script>
+        <script type="text/javascript" src="js/verineAuthoringTool.js"></script>
 
 
 </body>
