@@ -5,9 +5,9 @@ $(document).ready(function () {
     var CURRENT_EXERCISE_ID = 1;
     var EXERCISE_ARRAY = [];
 
+    //Testdaten
     var exercise = {};
     exercise.id = 1;
-    exercise.order = 1;
     exercise.name = "Einleitung";
     exercise.question = "Willkommen bei der Einleitung";
     exercise.info = "Blablabla";
@@ -17,7 +17,6 @@ $(document).ready(function () {
 
     exercise = {};
     exercise.id = 2;
-    exercise.order = 1;
     exercise.name = "Übung 1";
     exercise.question = "Wann ist Franz Meier geboren?";
     exercise.info = "Ein Datum wird in SQL Datenbanken im englischen Format 'YYYY-MM-DD' angegeben. \n Y = Year, M = Month, D = Day.";
@@ -27,7 +26,6 @@ $(document).ready(function () {
 
     exercise = {};
     exercise.id = 3;
-    exercise.order = 3;
     exercise.name = "Übung 2";
     exercise.question = "Wie heisst Fritz mit Nachnamen";
     exercise.info = "";
@@ -49,21 +47,21 @@ $(document).ready(function () {
         fillAuthoringToolWithExercise();
     });
 
-    //Button: neue Exercise
+    //Button: neue Übung
     $(".btnNewExercise").on("click", function () {
         createExercise();
         fillExerciseSelect(CURRENT_EXERCISE_ID);
         fillAuthoringToolWithExercise();
     });
 
-    //Button: neue Exercise
+    //Button: aktuelle Übung löschen
     $(".btnDeleteExercise").on("click", function () {
         deleteExercise();
         fillExerciseSelect(CURRENT_EXERCISE_ID);
         fillAuthoringToolWithExercise();
     });
 
-    //Select: Exercises werden ausgewählt
+    //Select: Übungen werden ausgewählt
     $('#selectExercises').change(function () {
         CURRENT_EXERCISE_ID = $(this).val();
         fillAuthoringToolWithExercise();
@@ -117,7 +115,7 @@ $(document).ready(function () {
         }
     }
 
-    //function: aktualisiert eine Exercise
+    //function: aktualisiert eine Übung
     function updateExercise() {
         var currentExercise = getExerciseById(CURRENT_EXERCISE_ID);
         //Exercise Objekt mit aktuellen Inhalten anpassen
@@ -127,11 +125,10 @@ $(document).ready(function () {
         currentExercise.answerKeywords = $("#txtAnswers").val();
         currentExercise.feedback = $("#txtFeedback").val();
     }
-    //function: erstellt ein neues Exercise Objekt mit ID und ORDER
+    //function: erstellt ein neues Übungs Objekt mit ID und Standardnamen
     function createExercise() {
         var newExercise = {};
         newExercise.id = getNewExerciseId();
-        newExercise.order = 3; //getNextSelectExerciseOrder();
         newExercise.name = "neue Übung";
         newExercise.question = "";
         newExercise.info = "";
@@ -174,7 +171,7 @@ $(document).ready(function () {
         EXERCISE_ARRAY.splice(indexToInsertExercise, 0, exerciseToAdd);
     }
 
-    //function: sucht die höchste aktuell vergebene Exercise ID und gibt diese +1 zurück
+    //function: sucht die höchste aktuell vergebene Übungs ID und gibt diese +1 zurück
     function getNewExerciseId() {
         var maxExerciseId = 0;
         EXERCISE_ARRAY.forEach(exercise => {
@@ -185,7 +182,7 @@ $(document).ready(function () {
         return (maxExerciseId + 1);
     }
 
-    //function: Befüllt die Textfelder mit den Inhalten einer Exercise
+    //function: Befüllt die Textfelder mit den Inhalten einer Übung
     function fillAuthoringToolWithExercise() {
         var currentExercise = getExerciseById(CURRENT_EXERCISE_ID);
         $("#txtTitle").val(currentExercise.name);
@@ -196,7 +193,7 @@ $(document).ready(function () {
 
     }
 
-    //function: Befüllt das <select> Element mit den verfügbaren Exercises
+    //function: Befüllt das <select> Element mit den verfügbaren Übungen
     function fillExerciseSelect(selectedId) {
         $("#selectExercises").html("");
         EXERCISE_ARRAY.forEach(exercise => {
@@ -205,7 +202,7 @@ $(document).ready(function () {
         if (selectedId != undefined) $("#selectExercises").val(selectedId);
     }
 
-    //function: Sucht aus dem Array mit Exercises die Exercise mit der übergebenen ID
+    //function: Sucht aus dem Array mit Übungen die Übung mit der übergebenen ID
     function getExerciseById(exerciseId) {
         var foundExercise = undefined;
         EXERCISE_ARRAY.forEach(exercise => {

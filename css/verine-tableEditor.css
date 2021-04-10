@@ -1,0 +1,7 @@
+
+.verineTableEditable{
+    table-layout: fixed;
+}
+.verineTableEditable th:first-child{
+    width: 100px;
+}
