@@ -13,7 +13,6 @@ $(document).ready(function () {
     exercise.info = "Blablabla";
     exercise.answerKeywords = "";
     exercise.feedback = "";
-
     EXERCISE_ARRAY.push(exercise);
 
     exercise = {};
@@ -24,12 +23,21 @@ $(document).ready(function () {
     exercise.info = "Ein Datum wird in SQL Datenbanken im englischen Format 'YYYY-MM-DD' angegeben. \n Y = Year, M = Month, D = Day.";
     exercise.answerKeywords = "1982-02-06";
     exercise.feedback = "Super, Deien SQL Abfrage war richtig.";
+    EXERCISE_ARRAY.push(exercise);
 
+    exercise = {};
+    exercise.id = 3;
+    exercise.order = 3;
+    exercise.name = "Übung 2";
+    exercise.question = "Wie heisst Fritz mit Nachnamen";
+    exercise.info = "";
+    exercise.answerKeywords = "Müller";
+    exercise.feedback = "Super, Deien SQL Abfrage war richtig.";
     EXERCISE_ARRAY.push(exercise);
 
     // START //
     fillExerciseSelect(CURRENT_EXERCISE_ID);
-    fillAuthoringToolWithExercise(CURRENT_EXERCISE_ID);
+    fillAuthoringToolWithExercise();
 
     ////////////
     // EVENTs //
@@ -38,25 +46,76 @@ $(document).ready(function () {
     $(".btnSave").on("click", function () {
         updateExercise();
         fillExerciseSelect(CURRENT_EXERCISE_ID);
-        fillAuthoringToolWithExercise(CURRENT_EXERCISE_ID);
+        fillAuthoringToolWithExercise();
     });
 
     //Button: neue Exercise
     $(".btnNewExercise").on("click", function () {
         createExercise();
         fillExerciseSelect(CURRENT_EXERCISE_ID);
-        fillAuthoringToolWithExercise(CURRENT_EXERCISE_ID);
+        fillAuthoringToolWithExercise();
+    });
+
+    //Button: neue Exercise
+    $(".btnDeleteExercise").on("click", function () {
+        deleteExercise();
+        fillExerciseSelect(CURRENT_EXERCISE_ID);
+        fillAuthoringToolWithExercise();
     });
 
     //Select: Exercises werden ausgewählt
     $('#selectExercises').change(function () {
         CURRENT_EXERCISE_ID = $(this).val();
-        fillAuthoringToolWithExercise(CURRENT_EXERCISE_ID);
+        fillAuthoringToolWithExercise();
     });
+
+    //Button: Übung in der Liste eine Position nach oben schieben
+    $(".btnMoveExerciseUp").on("click", function () {
+        selectMoveExerciseUp();
+        fillExerciseSelect(CURRENT_EXERCISE_ID);
+    });
+    //Button: Übung in der Liste eine Position nach unten schieben
+    $(".btnMoveExerciseDown").on("click", function () {
+        selectMoveExerciseDown();
+        fillExerciseSelect(CURRENT_EXERCISE_ID);
+    });
+
 
 
     ///////////////
     // FUNCTIONs //
+
+    //function: verschiebt eine Übung im Übungsarray eine Position nach oben
+    function selectMoveExerciseUp() {
+        var currentExercise = getExerciseById(CURRENT_EXERCISE_ID);
+        var currentArrayIndexOfExercise = 0;
+        EXERCISE_ARRAY.forEach((exercise, index) => {
+            if (exercise.id == currentExercise.id) {
+                currentArrayIndexOfExercise = index;
+            }
+        });
+        //ist Übung nicht an erster Position des Arrays, schiebe die Übung nach oben
+        if (currentArrayIndexOfExercise > 0) {
+            EXERCISE_ARRAY.splice(currentArrayIndexOfExercise, 1);
+            EXERCISE_ARRAY.splice(currentArrayIndexOfExercise - 1, 0, currentExercise);
+        }
+    }
+
+    //function: verschiebt eine Übung im Übungsarray eine Position nach unten
+    function selectMoveExerciseDown() {
+        var currentExercise = getExerciseById(CURRENT_EXERCISE_ID);
+        var currentArrayIndexOfExercise = 0;
+        EXERCISE_ARRAY.forEach((exercise, index) => {
+            if (exercise.id == currentExercise.id) {
+                currentArrayIndexOfExercise = index;
+            }
+        });
+        //ist Übung nicht an erster Position des Arrays, schiebe die Übung nach oben
+        if (currentArrayIndexOfExercise < EXERCISE_ARRAY.length - 1) {
+            EXERCISE_ARRAY.splice(currentArrayIndexOfExercise, 1);
+            EXERCISE_ARRAY.splice(currentArrayIndexOfExercise + 1, 0, currentExercise);
+        }
+    }
 
     //function: aktualisiert eine Exercise
     function updateExercise() {
@@ -82,18 +141,26 @@ $(document).ready(function () {
         CURRENT_EXERCISE_ID = newExercise.id;
     }
 
-    //function: testet ob die Exercise im Array schon existiert, wenn ja wird diese aktualisiert, wenn nicht, wird diese neu hinzugefügt.
-    function addExerciseToArray(exerciseToAdd, inserAfterExerciseId) {
-        var exerciseExists = false;
+    //function: löscht eine ausgewählte Übung und setzt die ID auf die nächst vorhandene Übung
+    function deleteExercise() {
+        var currentExercise = getExerciseById(CURRENT_EXERCISE_ID);
+        var currentArrayIndexOfExercise = 0;
         EXERCISE_ARRAY.forEach((exercise, index) => {
-            if (exercise.id == exerciseToAdd.id) {
-                exercise = exerciseToAdd;
-                exerciseExists = true;
+            if (exercise.id == currentExercise.id) {
+                currentArrayIndexOfExercise = index;
             }
         });
-        if (!exerciseExists) {
-            EXERCISE_ARRAY.push(exerciseToAdd);
+        //vorherige/nächste Übung wird selektiert
+        if (currentArrayIndexOfExercise > 0) { // Übung vor der zu löschenden Übung
+            CURRENT_EXERCISE_ID = EXERCISE_ARRAY[currentArrayIndexOfExercise - 1].id;
+        } else if (currentArrayIndexOfExercise < EXERCISE_ARRAY.length - 1) { // Übung nach der zu löschenden Übung
+            CURRENT_EXERCISE_ID = EXERCISE_ARRAY[currentArrayIndexOfExercise + 1].id;
+        } else { //die zu löschende Übung ist die letzte Übung, eine neue leere Übung wird erstellt
+            createExercise();
+            fillExerciseSelect(CURRENT_EXERCISE_ID);
+            fillAuthoringToolWithExercise();
         }
+        EXERCISE_ARRAY.splice(currentArrayIndexOfExercise, 1);
     }
 
     //function: fügt eine neue Übung nach einer angegebenen Übungs ID ein
@@ -107,8 +174,6 @@ $(document).ready(function () {
         EXERCISE_ARRAY.splice(indexToInsertExercise, 0, exerciseToAdd);
     }
 
-
-
     //function: sucht die höchste aktuell vergebene Exercise ID und gibt diese +1 zurück
     function getNewExerciseId() {
         var maxExerciseId = 0;
@@ -121,8 +186,8 @@ $(document).ready(function () {
     }
 
     //function: Befüllt die Textfelder mit den Inhalten einer Exercise
-    function fillAuthoringToolWithExercise(exerciseId) {
-        var currentExercise = getExerciseById(exerciseId);
+    function fillAuthoringToolWithExercise() {
+        var currentExercise = getExerciseById(CURRENT_EXERCISE_ID);
         $("#txtTitle").val(currentExercise.name);
         $("#txtExerciseDescription").val(currentExercise.question);
         $("#txtExcerciseMeta").val(currentExercise.info);
@@ -151,9 +216,7 @@ $(document).ready(function () {
         return foundExercise;
     }
 
-    function getKeywords() {
 
-    }
 
 
 
