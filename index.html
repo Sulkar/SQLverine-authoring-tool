@@ -26,8 +26,7 @@
     <meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
     <link rel="stylesheet" href="css/sql-editor.css">
     <link rel="stylesheet" href="css/verine-tableEditor.css">
 </head>
@@ -43,8 +42,7 @@
                 <span style="float: right; display:none;"><input id="displayDebug" type="checkbox"> <label
                         for="displayDebug">debug</label></span>
                 <h2 id="headerSql">
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                        width="2em" viewBox="0,0,436.36684,267.67784">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2em" viewBox="0,0,436.36684,267.67784">
                         <g transform="translate(-81.81658,-66.37462)">
                             <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero"
                                 stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
@@ -86,8 +84,7 @@
                     <option value="3">Schluss</option>
                 </select>
                 <div class="contentMenu">
-                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
+                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                             class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
                             <path
@@ -96,8 +93,7 @@
                                 d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
                         </svg>
                     </button>
-                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
+                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                             class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
                             <path
@@ -106,8 +102,7 @@
                                 d="M14 14V4.5L9.5 0H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h8a2 2 0 0 0 2-2zM9.5 3A1.5 1.5 0 0 0 11 4.5h2V14a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1h5.5v2z" />
                         </svg>
                     </button>
-                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
+                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                             class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
                             <path
@@ -117,12 +112,10 @@
                         </svg>
                     </button>
                     <!--buttons moveExerciseUp / Down-->
-                    <button id="btnMoveExerciseUp" class="btnMoveExerciseUp d-none d-md-inline-block"
-                        data-toggle="tooltip" data-placement="top" title="Download Database">
+                    <button id="btnMoveExerciseUp" class="btnMoveExerciseUp d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                         UP
                     </button>
-                    <button id="btnMoveExerciseDown" class="btnMoveExerciseDown d-none d-md-inline-block"
-                        data-toggle="tooltip" data-placement="top" title="Download Database">
+                    <button id="btnMoveExerciseDown" class="btnMoveExerciseDown d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                         DOWN
                     </button>
 
@@ -132,14 +125,9 @@
                 <h2>Übungen</h2>
                 <nav>
                     <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                        <button class="nav-link active" id="nav-edit-tab" data-bs-toggle="tab"
-                            data-bs-target="#nav-edit" type="button" role="tab" aria-controls="nav-edit"
-                            aria-selected="true">Editieren</button>
-                        <button class="nav-link" id="nav-preview-tab" data-bs-toggle="tab" data-bs-target="#nav-preview"
-                            type="button" role="tab" aria-controls="nav-preview" aria-selected="false">Vorschau</button>
-                        <button class="nav-link" id="nav-tableEdit-tab" data-bs-toggle="tab"
-                            data-bs-target="#nav-tableEdit" type="button" role="tab" aria-controls="nav-tableEdit"
-                            aria-selected="false">Tabelle</button>
+                        <button class="nav-link active" id="nav-edit-tab" data-bs-toggle="tab" data-bs-target="#nav-edit" type="button" role="tab" aria-controls="nav-edit" aria-selected="true">Editieren</button>
+                        <button class="nav-link" id="nav-preview-tab" data-bs-toggle="tab" data-bs-target="#nav-preview" type="button" role="tab" aria-controls="nav-preview" aria-selected="false">Vorschau</button>
+                        <button class="nav-link" id="nav-tableEdit-tab" data-bs-toggle="tab" data-bs-target="#nav-tableEdit" type="button" role="tab" aria-controls="nav-tableEdit" aria-selected="false">Tabelle</button>
 
                     </div>
                 </nav>
@@ -153,51 +141,79 @@
                             </div>
                         </div>
                         <div class="row mb-3">
-                            <label for="txtExerciseDescription"
-                                class="col-sm-2 col-form-label">Übungsbeschreibung:</label>
+                            <label for="txtExerciseDescription" class="col-sm-2 col-form-label">Übungsbeschreibung:</label>
                             <div class="col-sm-10">
-                                <textarea type="text" class="form-control" id="txtExerciseDescription"
-                                    placeholder="Das ist in dieser Übungseinheit zu machen..."></textarea>
+                                <textarea type="text" class="form-control" id="txtExerciseDescription" placeholder="Das ist in dieser Übungseinheit zu machen..."></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <label for="txtExcerciseMeta" class="col-sm-2 col-form-label">Metainformationen:</label>
                             <div class="col-sm-10">
-                                <textarea type="text" class="form-control" id="txtExcerciseMeta"
-                                    placeholder="Informationen die z.B. Befehle beschreiben..."></textarea>
+                                <textarea type="text" class="form-control" id="txtExcerciseMeta" placeholder="Informationen die z.B. Befehle beschreiben..."></textarea>
                             </div>
                         </div>
                         <div class="row mb-3">
                             <label for="txtAnswers" class="col-sm-2 col-form-label">Antwort(en):</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="txtAnswers"
-                                    placeholder="Antwort1|Antwort2|Antwort3|...">
+                                <input type="text" class="form-control" id="txtAnswers" placeholder="Antwort1|Antwort2|Antwort3|...">
                             </div>
                         </div>
                         <div class="row mb-3">
                             <label for="txtFeedback" class="col-sm-2 col-form-label">Feedback:</label>
                             <div class="col-sm-10">
-                                <textarea type="text" class="form-control" id="txtFeedback"
-                                    placeholder="Das willst du bei Erfolg ausgeben..."></textarea>
+                                <textarea type="text" class="form-control" id="txtFeedback" placeholder="Das willst du bei Erfolg ausgeben..."></textarea>
                             </div>
                         </div>
 
-                        <button id="btnSave" class="btnSave d-none d-md-inline-block" data-toggle="tooltip"
-                            data-placement="top" title="Download Database">
+                        <button id="btnSave" class="btnSave d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                             speichern
                         </button>
-                        <button id="btnNewExercise" class="btnNewExercise d-none d-md-inline-block"
-                            data-toggle="tooltip" data-placement="top" title="Download Database">
+                        <button id="btnNewExercise" class="btnNewExercise d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                             neue Übung
                         </button>
-                        <button id="btnDeleteExercise" class="btnDeleteExercise d-none d-md-inline-block"
-                            data-toggle="tooltip" data-placement="top" title="Download Database" style="color: red;">
+                        <button id="btnDeleteExercise" class="btnDeleteExercise d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database" style="color: red;">
                             Übung löschen
                         </button>
                     </div>
 
                     <!-- Tab: Vorschau -->
                     <div class="tab-pane fade" id="nav-preview" role="tabpanel" aria-labelledby="nav-preview-tab">
+                        <div class="row progressArea">
+                            <div class="progress">
+                                <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                        <div class="row exerciseContentArea">
+                            <h1>Überschrift zur Übung</h1>
+                            <div class="exerciseDescription">
+                                <h2>Aufgabenstellung</h2>
+                                <p>Ich bin die Beschreibung zur Übung. Du sollst folgendes machen:</p>
+                                <ul>
+                                    <li>Erstens...</li>
+                                    <li>Zweitens...</li>
+                                    <li>Drittens...</li>
+                                </ul>
+                                <div class="card border-success col-sm-10">
+                                    <div class="card-header">Hilfreiche Informationen</div>
+                                    <div class="card-body text-dark">
+                                        <h5>Hier findest du eine Erklärung zum SELECT Befehl.</h5>
+                                        <p>Ich bin ein ganz toller Befehl und schaue so aus:</p>
+                                        <code>SELECT * FROM Tabelle1</code>
+                                    </div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <div class="excerciceSubmitArea">
+                            <label for="txtAnswer" class="col-sm-2 col-form-label">Lösung:</label>
+                            <div class="col-sm-10">
+                                <input type="text" class="form-control" id="txtAnswer" placeholder="Die Antwort lautet...">
+                            </div>
+                            <button type="button" id="btnSubmitSolution" class="btn btn-success">Abgeben</button>
+
+                        </div>
+
+
 
                     </div>
 
@@ -232,12 +248,11 @@
 
                             </table>
                         </div>
-                        
-                            <button id="btnAddRow" class="btnSave d-none d-md-inline-block" data-toggle="tooltip"
-                                data-placement="top" title="Download Database">
+
+                        <button id="btnAddRow" class="btnSave d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                                 neue Zeile
                             </button>
-                        
+
 
                     </div>
 
@@ -251,9 +266,8 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
         </script>
 
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
-            </script>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+        </script>
 
         <script src="dist/sql-wasm.js"></script>
 
