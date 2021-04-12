@@ -5,3 +5,7 @@
 .verineTableEditable th:first-child{
     width: 100px;
 }
+.verineRowDelete{
+    color: red;
+    cursor: pointer;
+}
