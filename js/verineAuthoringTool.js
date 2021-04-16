@@ -393,8 +393,14 @@ $(document).ready(function () {
     $("#btnSaveData").on("click", function () {
         CURRENT_VERINE_DATABASE.updateValues = checkForUpdates();
         CURRENT_VERINE_DATABASE.insertValues = checkForInserts();
-
-        CURRENT_VERINE_DATABASE.persist();
+        //persist data
+        if (CURRENT_VERINE_DATABASE.persist().length > 0) {
+            console.log("error persist");
+        } else {
+            //update table view
+            CURRENT_VERINE_DATABASE.prepareTableData(null);
+            $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
+        }
     });
 
     //Event: wenn eine Zelle der Tabelle angeklickt wird, wird diese editierbar gemacht

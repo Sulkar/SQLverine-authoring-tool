@@ -33,10 +33,12 @@ class VerineDatabase {
 
     persist() {
 
+        let errorLogArray = [];
         //update rows
         try {
             if (this.createUpdateQuery() != undefined) this.database.exec(this.createUpdateQuery());
         } catch (err) {
+            errorLogArray.push(err);
             console.log(err);
         }
 
@@ -44,15 +46,17 @@ class VerineDatabase {
         try {
             if (this.createDeleteQuery() != undefined) this.database.exec(this.createDeleteQuery());
         } catch (err) {
+            errorLogArray.push(err);
             console.log(err);
         }
         //insert rows
         try {
             if (this.createInsertQuery() != undefined) this.database.exec(this.createInsertQuery());
         } catch (err) {
+            errorLogArray.push(err);
             console.log(err);
         }
-
+        return errorLogArray;
 
     }
 
@@ -116,7 +120,12 @@ class VerineDatabase {
     }
 
     prepareTableData(tableName) {
-        this.activeTable = tableName;
+        if(tableName == null){
+            tableName = this.activeTable;
+        }else{
+            this.activeTable = tableName;
+        }
+        
 
         let tableCreateStatement = this.getTableCreateStatement(tableName);
         let tableData = this.database.exec("SELECT * FROM " + tableName);
