@@ -32,25 +32,60 @@ class VerineDatabase {
     }
 
     persist() {
-        //log(this.updateValues)
-        //log(this.insertValues)
-        // log(this.deleteValues)
-        log(this.insertValues[0])
-        //insert new data
+
+        //update rows
         try {
-            let insertQuery = this.createInsertQuery();
-            this.database.exec("INSERT INTO " + this.activeTable + "(" + insertQuery[0] + ") VALUES " + insertQuery[1] + ";");
+            if (this.createUpdateQuery() != undefined) this.database.exec(this.createUpdateQuery());
         } catch (err) {
             console.log(err);
         }
 
+        //delete rows
+        try {
+            if (this.createDeleteQuery() != undefined) this.database.exec(this.createDeleteQuery());
+        } catch (err) {
+            console.log(err);
+        }
+        //insert rows
+        try {
+            if (this.createInsertQuery() != undefined) this.database.exec(this.createInsertQuery());
+        } catch (err) {
+            console.log(err);
+        }
+
+
     }
 
+    createUpdateQuery() {
 
+        let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
+        this.updateValues.forEach(updateValue => {
+            if (isNaN(updateValue[2])) {
+                updateQuery += 'UPDATE ' + this.activeTable + ' SET ' + updateValue[1] + ' = "' + updateValue[2] + '" WHERE id = ' + updateValue[0] + ';';
+            } else {
+                updateQuery += 'UPDATE ' + this.activeTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
+            }
+
+        });
+
+        if (updateQuery != "") return updateQuery;
+        else return undefined;
+
+    }
+
+    createDeleteQuery() {
+        let deleteIds = ""; // '"DELETE FROM mytable WHERE id IN (?,?,?,...)");'
+        this.deleteValues.forEach(idToDelete => {
+            if (deleteIds == "") deleteIds += idToDelete;
+            else deleteIds += ", " + idToDelete;
+        });
+        if (deleteIds != "") return 'DELETE FROM ' + this.activeTable + ' WHERE id IN (' + deleteIds + ')';
+        else return undefined;
+    }
 
     createInsertQuery() {
+        let insertQuery = "";
         //INSERT INTO pokemon(name, nr, größe, gewicht) VALUES("Pikachu", 3, 34, 4)
-        let insertQuery = [];
         let tableNamesString = "";
         this.columns.forEach(column => {
             if (!column.type.split("|").includes("PRIMARY KEY")) {
@@ -59,38 +94,26 @@ class VerineDatabase {
             }
         });
 
-        let insertValuesString = "";     //[auto, Spalte1, Spalte2, ...]
+        //[auto, Spalte1, Spalte2, ...]
         this.insertValues.forEach(valueArray => {
-            let tempValuesString = "";
+            let valuesString = "";
             valueArray.forEach((value, index) => {
                 if (value != "auto") {
                     if (isNaN(value)) value = '"' + value + '"'; //wenn value keine Zahl ist, muss es mit " " umklammert werden
-                    if (tempValuesString == "") tempValuesString += '(' + value;
-                    else tempValuesString += ', ' + value;
+                    if (valuesString == "") valuesString += '(' + value;
+                    else valuesString += ', ' + value;
 
-                    if (index == valueArray.length - 1) tempValuesString += ')';
+                    if (index == valueArray.length - 1) valuesString += ')';
 
                 }
             });
-            if (insertValuesString == "") insertValuesString += tempValuesString;
-            else insertValuesString += ', ' + tempValuesString;
+            insertQuery += 'INSERT INTO ' + this.activeTable + '(' + tableNamesString + ') VALUES ' + valuesString + ';';
         });
 
-        insertQuery.push(tableNamesString);
-        insertQuery.push(insertValuesString);
-
-        return insertQuery;
+        //build insertQuery
+        if (insertQuery != "") return insertQuery;
+        else return undefined;
     }
-    /*
-CREATE TABLE "schueler"(
-    "id" INTEGER NOT NULL UNIQUE,
-    "vorname" TEXT NOT NULL,
-    "nachname" TEXT NOT NULL,
-    "geburtsdatum" TEXT,
-    "klasse_id" INTEGER NOT NULL,
-    PRIMARY KEY("id" AUTOINCREMENT),
-    FOREIGN KEY("klasse_id") REFERENCES "klassen"("id")
-);*/
 
     prepareTableData(tableName) {
         this.activeTable = tableName;
