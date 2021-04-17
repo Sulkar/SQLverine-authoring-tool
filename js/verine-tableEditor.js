@@ -40,18 +40,6 @@ var DELETE_VALUES = []; //[sql_id, sql_id, ...]
 ///////////////
 // FUNCTIONS //
 
-/*
-CREATE TABLE "schueler"(
-    "id" INTEGER NOT NULL UNIQUE,
-    "vorname" TEXT NOT NULL,
-    "nachname" TEXT NOT NULL,
-    "geburtsdatum" TEXT,
-    "klasse_id" INTEGER NOT NULL,
-    PRIMARY KEY("id" AUTOINCREMENT),
-    FOREIGN KEY("klasse_id") REFERENCES "klassen"("id")
-);*/
-
-
 //function: erstellt eine Tabelle anhand von Spalten und Zeilen
 function createTableDataEdit(columns, values) {
     TABLE_COLUMNS = columns;

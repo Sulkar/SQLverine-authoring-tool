@@ -145,18 +145,13 @@ class VerineDatabase {
     }
 
     udpateExercise(exerciseUpdateArray) {
-        console.log(exerciseUpdateArray)
         let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
         exerciseUpdateArray.forEach(updateValue => {
-            if (isNaN(updateValue[2])) {
-                console.log("in")
+            if (isNaN(updateValue[2]) || updateValue[2] == "") { //[1, "titel", ""]
                 updateQuery += 'UPDATE ' + this.exerciseTable + ' SET ' + updateValue[1] + ' = "' + updateValue[2] + '" WHERE id = ' + updateValue[0] + ';';
             } else {
-                console.log(updateValue[2] )
                 updateQuery += 'UPDATE ' + this.exerciseTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
             }
-
-            
         });
         try {
             this.database.exec(updateQuery);
@@ -244,7 +239,7 @@ class VerineDatabase {
 
         let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
         this.updateValues.forEach(updateValue => {
-            if (isNaN(updateValue[2])) {
+            if (isNaN(updateValue[2]) || updateValue[2] == "") {
                 updateQuery += 'UPDATE ' + this.activeTable + ' SET ' + updateValue[1] + ' = "' + updateValue[2] + '" WHERE id = ' + updateValue[0] + ';';
             } else {
                 updateQuery += 'UPDATE ' + this.activeTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
