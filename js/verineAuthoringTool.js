@@ -39,22 +39,19 @@ $(document).ready(function() {
 
     ////////////
     // Quill //
-
     var quillExerciseDescription = new Quill('#txtExerciseDescription', {
-
         theme: 'snow'
     });
 
 
     var quillExcerciseMeta = new Quill('#txtExcerciseMeta', {
-
         theme: 'snow'
     });
 
     var quillFeedback = new Quill('#txtFeedback', {
-
         theme: 'snow'
     });
+
     ////////////
     // EVENTs //
 
