@@ -7,6 +7,12 @@ h1 {
     margin: 0 0 30px;
 }
 
+.spanBtn{
+    cursor: pointer;
+    color: #0d6efd;
+    user-select: none;
+}
+
 .button {
     color: #333;
     background: linear-gradient(#eee, #ddd);

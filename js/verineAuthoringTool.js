@@ -40,6 +40,51 @@ $(document).ready(function () {
     ////////////
     // EVENTs //
 
+    // Datenbankdatei wurde zum Upload ausgewählt
+    $("#fileDbUpload").on('change', function () {
+        var uploadedFile = this.files[0];
+
+        var fileReader = new FileReader();
+        fileReader.onload = function () {
+            init(fileReader.result).then(function (initObject) {
+
+
+                let uploadedFileName = buildDatabaseName(uploadedFile.name, null);
+                let verineDatabase = new VerineDatabase(uploadedFileName, initObject, "local");
+                CURRENT_VERINE_DATABASE = verineDatabase;
+                DATABASE_ARRAY.push(verineDatabase);
+                CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
+
+                updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
+                let tempTables = verineDatabase.getTables();
+                updateTableChooser(tempTables[0], tempTables);
+
+            }, function (error) { console.log(error) });
+        }
+        fileReader.readAsArrayBuffer(uploadedFile);
+
+    });
+
+    //Button: lädt die aktuell ausgewählte Datenbank herunter
+    $(".btnDbDownload").click(function () {
+        var binaryArray = CURRENT_VERINE_DATABASE.database.export();
+
+        var blob = new Blob([binaryArray]);
+        var a = document.createElement("a");
+        document.body.appendChild(a);
+        a.href = window.URL.createObjectURL(blob);
+        a.download = DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name;
+        a.onclick = function () {
+            setTimeout(function () {
+                window.URL.revokeObjectURL(a.href);
+            }, 1500);
+        };
+        a.click();
+    });
+
+    ////////////////////////////////////
+    //Buttons im Reiter Übungen Editieren
+
     //Button: Speichern
     $(".btnSave").on("click", function () {
         updateExercise();
@@ -90,6 +135,7 @@ $(document).ready(function () {
 
     ////////////////////////////////////
     //Buttons im Reiter Daten bearbeiten
+
     //Button: fügt am Ende der Tabelle eine neue Zeile ein
     $("#btnAddRow").on("click", function () {
         $(".verineTableEditable tbody").append(createNewRow());
@@ -129,46 +175,44 @@ $(document).ready(function () {
 
     });
 
-    // Datenbankdatei wurde zum Upload ausgewählt
-    $("#fileDbUpload").on('change', function () {
-        var uploadedFile = this.files[0];
+    //////////////////////////////////////
+    //Buttons im Reiter Datenbank Struktur
 
-        var fileReader = new FileReader();
-        fileReader.onload = function () {
-            init(fileReader.result).then(function (initObject) {
-
-
-                let uploadedFileName = buildDatabaseName(uploadedFile.name, null);
-                let verineDatabase = new VerineDatabase(uploadedFileName, initObject, "local");
-                CURRENT_VERINE_DATABASE = verineDatabase;
-                DATABASE_ARRAY.push(verineDatabase);
-                CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
-
-                updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
-                let tempTables = verineDatabase.getTables();
-                updateTableChooser(tempTables[0], tempTables);
-
-            }, function (error) { console.log(error) });
+    //Button: Führt SQL Code auf der ausgewählten Datenbank aus
+    $("#btnDirectSql").on("click", function () {
+        let sqlCode = $("#txtDirectSql").val();
+        let result = CURRENT_VERINE_DATABASE.runSqlCode(sqlCode);
+        if (result.error == undefined) {
+            console.log(result.query);
+            let tempTables = CURRENT_VERINE_DATABASE.getTables();
+            updateTableChooser(tempTables[0], tempTables);
+            if (result.query != undefined) {
+                $("#divQueryResult").show();
+                $("#txtQueryResult").hide();
+                $("#divQueryResult").html(createTableSql(result.query.columns, result.query.values));
+            } else {
+                $("#divQueryResult").hide();
+                $("#txtQueryResult").show();
+                $("#txtQueryResult").val("SQL Befehl erfolgreich ausgeführt: \n" + sqlCode);
+            }
+        } else {
+            $("#divQueryResult").hide();
+            $("#txtQueryResult").show();
+            $("#txtQueryResult").val(result.error);
         }
-        fileReader.readAsArrayBuffer(uploadedFile);
-
     });
 
-    //Button: lädt die aktuell ausgewählte Datenbank herunter
-    $(".btnDbDownload").click(function () {
-        var binaryArray = CURRENT_VERINE_DATABASE.database.export();
-
-        var blob = new Blob([binaryArray]);
-        var a = document.createElement("a");
-        document.body.appendChild(a);
-        a.href = window.URL.createObjectURL(blob);
-        a.download = DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name;
-        a.onclick = function () {
-            setTimeout(function () {
-                window.URL.revokeObjectURL(a.href);
-            }, 1500);
-        };
-        a.click();
+    $("#spanBtnCreate").on("click", function(){
+        let createCommand = 'CREATE TABLE meine_tabelle (\n "id" INTEGER PRIMARY KEY,\n "first_name" TEXT NOT NULL,\n "last_name" TEXT NOT NULL,\n "email" TEXT NOT NULL UNIQUE,\n "phone" TEXT NOT NULL UNIQUE\n );';
+        $("#txtDirectSql").val(createCommand);
+    });
+    $("#spanBtnInsert").on("click", function(){
+        let insertCommand = 'INSERT INTO meine_tabelle (first_name, last_name, email, phone)\nVALUES\n ("Richard", "Müller", "mueller@example.com", "080 654321")';
+        $("#txtDirectSql").val(insertCommand);
+    });
+    $("#spanBtnUpdate").on("click", function(){
+        let updateCommand = 'UPDATE meine_tabelle\nSET first_name = "Benni",\n last_name = "Geuder"\nWHERE id = 1;';
+        $("#txtDirectSql").val(updateCommand);
     });
 
     ///////////////
@@ -188,7 +232,6 @@ $(document).ready(function () {
     //function: aktualisiert eine Übung
     function updateExercise() {
         var currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
-        log(currentExercise)
         if (!$.isEmptyObject(currentExercise)) {
             let exerciseUpdateArray = [];
             if (currentExercise.titel != $("#txtTitle").val()) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "titel", $("#txtTitle").val()]);
@@ -224,6 +267,27 @@ $(document).ready(function () {
             $("#txtAnswers").val(currentExercise.antworten);
             $("#txtFeedback").val(currentExercise.feedback);
         }
+    }
+
+    //function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage
+    function createTableSql(columns, values) {
+        var newTable = "<div class='table-responsive'><table class='table table-bordered tableSql' style=''>";
+        newTable += "<thead>";
+        columns.forEach((column) => {
+            newTable += "<th scope='col'>" + column + "</th>";
+        });
+        newTable += "</thead>";
+        newTable += "<tbody>";
+        values.forEach((value) => {
+            newTable += "<tr>";
+            value.forEach((element) => {
+                newTable += "<td style=''>" + element + "</td>";
+            });
+            newTable += "</tr>";
+        });
+        newTable += "</tbody>";
+        newTable += "</table></div>"
+        return newTable;
     }
 
     //function: Befüllt das <select> Element mit den verfügbaren Übungen

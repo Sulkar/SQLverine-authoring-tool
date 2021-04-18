@@ -19,6 +19,19 @@ class VerineDatabase {
         this.deleteValues = []; //[sql_id, sql_id, ...]
     }
 
+    runSqlCode(sqlCode) {
+        let result = {};
+        result.error = undefined;
+        result.query = undefined;
+        try {
+            result.query = this.database.exec(sqlCode)[0];
+            return result;
+        } catch (err) {
+            result.error = err;
+            return result;
+        }
+    }
+
     getExerciseOrder() {
         var exerciseOrderArray = [];
         this.getExercises().forEach(exercise => {
@@ -301,19 +314,31 @@ class VerineDatabase {
 
         let tableCreateStatement = this.getTableCreateStatement(tableName);
         let tableData = this.database.exec("SELECT * FROM " + tableName);
-        let columnObjects = [];
-        tableData[0].columns.forEach(column => {
-            let columnObject = this.createColumnObject(column, tableCreateStatement);
-            columnObjects.push(columnObject);
-        });
+        if (tableData[0] != undefined) {
+            let columnObjects = [];
+            tableData[0].columns.forEach(column => {
+                let columnObject = this.createColumnObject(column, tableCreateStatement);
+                columnObjects.push(columnObject);
+            });
 
-        this.columns = columnObjects;
-        this.values = tableData[0].values;
+            this.columns = columnObjects;
+            this.values = tableData[0].values;
+        }else{ //keine Daten in der Tabelle vorhanden
+            let columns = this.getColumns(tableName);
+            let columnObjects = [];
+            columns.forEach(column => {
+                let columnObject = this.createColumnObject(column[1], tableCreateStatement);
+                columnObjects.push(columnObject);
+            })
+            this.columns = columnObjects;
+            this.values = [];
+        }
     }
 
     createColumnObject(columnName, tableCreateStatement) {
 
-        let typeArray = ["INTEGER", "TEXT", "REAL", "NOT NULL", "UNIQUE"];
+        console.log(tableCreateStatement)
+        let typeArray = ["INTEGER", "TEXT", "REAL", "NOT NULL", "UNIQUE", "PRIMARY KEY"];
 
         let columnObject = {};
         columnObject.name = columnName;
@@ -322,10 +347,12 @@ class VerineDatabase {
         //untersucht das Table Create Statement
         let tableCreateStatementArray = tableCreateStatement.split(",");
         tableCreateStatementArray.forEach(createStatementLine => {
-
+            
             //find types
-            let foundColumnName = createStatementLine.match(/\n(\s|)"([\wöäüß]+)"/); // z.B.: "id" INTEGER NOT NULL UNIQUE,
+            let foundColumnName = createStatementLine.match(/\n(\s+|)"([\wöäüß]+)"/); // z.B.: "id" INTEGER NOT NULL UNIQUE,
+            console.log(createStatementLine)
             if (foundColumnName != null && foundColumnName[2] == columnName) {
+                console.log("found " + columnName)
                 typeArray.forEach(sqlType => {
                     var re = new RegExp("\\b" + sqlType + "\\b", "");
                     if (createStatementLine.search(re) != -1) {
