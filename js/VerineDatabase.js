@@ -157,11 +157,12 @@ class VerineDatabase {
         }
     }
 
-    udpateExercise(exerciseUpdateArray) {
+    updateExercise(exerciseUpdateArray) {
         let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
         exerciseUpdateArray.forEach(updateValue => {
             if (isNaN(updateValue[2]) || updateValue[2] == "") { //[1, "titel", ""]
-                updateQuery += 'UPDATE ' + this.exerciseTable + ' SET ' + updateValue[1] + ' = "' + updateValue[2] + '" WHERE id = ' + updateValue[0] + ';';
+                //updateQuery += 'UPDATE ' + this.exerciseTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
+                updateQuery += "UPDATE " + this.exerciseTable + " SET " + updateValue[1] + " = '" + updateValue[2] + "' WHERE id = " + updateValue[0] + ";";
             } else {
                 updateQuery += 'UPDATE ' + this.exerciseTable + ' SET ' + updateValue[1] + ' = ' + updateValue[2] + ' WHERE id = ' + updateValue[0] + ';';
             }
@@ -337,7 +338,6 @@ class VerineDatabase {
 
     createColumnObject(columnName, tableCreateStatement) {
 
-        console.log(tableCreateStatement)
         let typeArray = ["INTEGER", "TEXT", "REAL", "NOT NULL", "UNIQUE", "PRIMARY KEY"];
 
         let columnObject = {};
@@ -350,9 +350,7 @@ class VerineDatabase {
             
             //find types
             let foundColumnName = createStatementLine.match(/\n(\s+|)"([\wöäüß]+)"/); // z.B.: "id" INTEGER NOT NULL UNIQUE,
-            console.log(createStatementLine)
             if (foundColumnName != null && foundColumnName[2] == columnName) {
-                console.log("found " + columnName)
                 typeArray.forEach(sqlType => {
                     var re = new RegExp("\\b" + sqlType + "\\b", "");
                     if (createStatementLine.search(re) != -1) {

@@ -37,7 +37,6 @@ var DELETE_VALUES = []; //[sql_id, sql_id, ...]
 
 //function: erstellt eine Tabelle anhand von Spalten und Zeilen
 function createTableDataEdit(columns, values) {
-    console.log("table")
     TABLE_COLUMNS = columns;
     TABLE_VALUES = values;
     var newTable = "";//"<table class='table table-hover verineTableEditable'>";
@@ -70,7 +69,6 @@ function createTableDataEdit(columns, values) {
 
     newTable += "</tbody>";
     //newTable += "</table>";
-    console.log(newTable)
     return newTable;
 
 }
@@ -90,8 +88,11 @@ function checkForUpdates() {
             if (element[0] == sqlIdOfRow) {
                 //check every data of current row
                 for (var i = 0; i < maxColumns; i++) {
-                    if ($("#id_" + i + "_" + tempRow).text() != element[i]) {
-                        var rowCellValue = $("#id_" + i + "_" + tempRow).text();
+                    if (he.encode($("#id_" + i + "_" + tempRow).text()) != element[i]) {
+                        console.log("difference")
+                        console.log(element[i])
+                        console.log($("#id_" + i + "_" + tempRow).text())
+                        var rowCellValue = he.encode($("#id_" + i + "_" + tempRow).text());
                         element[i] = rowCellValue;
                         var columnName = TABLE_COLUMNS[i].name;
                         var rowIdValueArray = [sqlIdOfRow, columnName, rowCellValue];
@@ -157,9 +158,8 @@ function getRowFromId(tempId) {
 function createNewRow() {
     var newRow = "<tr id='row_" + (MAX_ROWS - 0) + "'>";
     TABLE_COLUMNS.forEach((element, indexColumn) => {
-        console.log(element)
         if (element.type.split("|").includes("PRIMARY KEY")) {
-            
+
             newRow += "<th class='sqlID' id='id_" + indexColumn + "_" + (MAX_ROWS - 0) + "'>auto</th>";
         } else {
             newRow += "<td style='' id='id_" + indexColumn + "_" + (MAX_ROWS - 0) + "' contenteditable='true'></td>";

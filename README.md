@@ -26,3 +26,4 @@ Erfolgt die Bereitstellung außerhalb einer öffentlichen Bildungseinrichtung od
 - [SQL.JS](https://sql.js.org/)
 - [jQuery](https://jquery.com/)
 - [Bootstrap](https://getbootstrap.com/)
+- [he.js - HTML entity encoder/decoder](https://github.com/mathiasbynens/he)

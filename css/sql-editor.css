@@ -542,3 +542,7 @@ element.style {}
     border-top-left-radius: 4px;
     border-top-right-radius: 4px;
 }
+.ql-snow .ql-editor img{
+    max-width: 640px;
+    max-height: 480px;
+}
