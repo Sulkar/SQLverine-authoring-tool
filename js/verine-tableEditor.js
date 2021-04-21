@@ -89,9 +89,6 @@ function checkForUpdates() {
                 //check every data of current row
                 for (var i = 0; i < maxColumns; i++) {
                     if (he.encode($("#id_" + i + "_" + tempRow).text()) != element[i]) {
-                        console.log("difference")
-                        console.log(element[i])
-                        console.log($("#id_" + i + "_" + tempRow).text())
                         var rowCellValue = he.encode($("#id_" + i + "_" + tempRow).text());
                         element[i] = rowCellValue;
                         var columnName = TABLE_COLUMNS[i].name;
