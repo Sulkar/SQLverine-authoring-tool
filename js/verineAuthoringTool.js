@@ -1,4 +1,4 @@
-$(document).ready(function () {
+$(document).ready(function() {
 
     /////////////
     // GLOBALS //
@@ -11,7 +11,7 @@ $(document).ready(function () {
     var CSS_COLOR_ARRAY = ["coral", "tomato", "orange", "gold", "palegreen", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
 
     // START: erste Datenbank wird geladen
-    init(fetch("data/Grundschule.db").then(res => res.arrayBuffer())).then(function (initObject) {
+    init(fetch("data/Grundschule.db").then(res => res.arrayBuffer())).then(function(initObject) {
 
         CURRENT_VERINE_DATABASE = new VerineDatabase("Grundschule.db", initObject, "server");
         DATABASE_ARRAY.push(CURRENT_VERINE_DATABASE);
@@ -34,7 +34,7 @@ $(document).ready(function () {
             console.log("not found")
         }
 
-    }, function (error) { console.log(error) });
+    }, function(error) { console.log(error) });
 
 
     ////////////
@@ -97,12 +97,12 @@ $(document).ready(function () {
     // EVENTs //
 
     // Datenbankdatei wurde zum Upload ausgewählt
-    $("#fileDbUpload").on('change', function () {
+    $("#fileDbUpload").on('change', function() {
         var uploadedFile = this.files[0];
 
         var fileReader = new FileReader();
-        fileReader.onload = function () {
-            init(fileReader.result).then(function (initObject) {
+        fileReader.onload = function() {
+            init(fileReader.result).then(function(initObject) {
 
 
                 let uploadedFileName = buildDatabaseName(uploadedFile.name, null);
@@ -115,14 +115,14 @@ $(document).ready(function () {
                 let tempTables = verineDatabase.getTables();
                 updateTableChooser(tempTables[0], tempTables);
 
-            }, function (error) { console.log(error) });
+            }, function(error) { console.log(error) });
         }
         fileReader.readAsArrayBuffer(uploadedFile);
 
     });
 
     //Button: lädt die aktuell ausgewählte Datenbank herunter
-    $(".btnDbDownload").click(function () {
+    $(".btnDbDownload").click(function() {
         var binaryArray = CURRENT_VERINE_DATABASE.database.export();
 
         var blob = new Blob([binaryArray]);
@@ -130,8 +130,8 @@ $(document).ready(function () {
         document.body.appendChild(a);
         a.href = window.URL.createObjectURL(blob);
         a.download = DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name;
-        a.onclick = function () {
-            setTimeout(function () {
+        a.onclick = function() {
+            setTimeout(function() {
                 window.URL.revokeObjectURL(a.href);
             }, 1500);
         };
@@ -142,7 +142,7 @@ $(document).ready(function () {
     //Buttons im Reiter Übungen Editieren
 
     //Button: Speichern
-    $("#btnSaveEdit").on("click", function () {
+    $("#btnSaveEdit").on("click", function() {
         updateExercise();
         fillExerciseSelect(CURRENT_EXERCISE_ID);
         fillAuthoringToolWithExercise();
@@ -152,14 +152,14 @@ $(document).ready(function () {
     });
 
     //Button: neue Übung
-    $(".btnNewExercise").on("click", function () {
+    $(".btnNewExercise").on("click", function() {
         createExercise();
         fillExerciseSelect(CURRENT_EXERCISE_ID);
         fillAuthoringToolWithExercise();
     });
 
     //Button: aktuelle Übung löschen
-    $(".btnDeleteExercise").on("click", function () {
+    $(".btnDeleteExercise").on("click", function() {
         CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.deleteExercise(CURRENT_EXERCISE_ID);
         if (CURRENT_EXERCISE_ID == undefined) {
             createExercise();
@@ -169,7 +169,7 @@ $(document).ready(function () {
     });
 
     //Select: Übungen werden ausgewählt
-    $('#selectExercises').change(function () {
+    $('#selectExercises').change(function() {
         CURRENT_EXERCISE_ID = $(this).val();
         fillAuthoringToolWithExercise();
         let tab = new bootstrap.Tab(document.querySelector('#nav-edit-tab'));
@@ -177,19 +177,19 @@ $(document).ready(function () {
     });
 
     //Button: Übung in der Liste eine Position nach oben schieben
-    $(".btnMoveExerciseUp").on("click", function () {
+    $(".btnMoveExerciseUp").on("click", function() {
         CURRENT_VERINE_DATABASE.reorderExercises(CURRENT_EXERCISE_ID, "up");
         fillExerciseSelect(CURRENT_EXERCISE_ID);
     });
 
     //Button: Übung in der Liste eine Position nach unten schieben
-    $(".btnMoveExerciseDown").on("click", function () {
+    $(".btnMoveExerciseDown").on("click", function() {
         CURRENT_VERINE_DATABASE.reorderExercises(CURRENT_EXERCISE_ID, "down");
         fillExerciseSelect(CURRENT_EXERCISE_ID);
     });
 
     // Select: Tabelle wird ausgewählt
-    $('#selTableChooser').on('change', function () {
+    $('#selTableChooser').on('change', function() {
         CURRENT_VERINE_DATABASE.prepareTableData(this.value);
         $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
         let tab = new bootstrap.Tab(document.querySelector('#nav-tableEdit-tab'));
@@ -200,12 +200,15 @@ $(document).ready(function () {
     //Buttons im Reiter Daten bearbeiten
 
     //Button: fügt am Ende der Tabelle eine neue Zeile ein
-    $("#btnAddRow").on("click", function () {
+    $("#btnAddRow").on("click", function() {
         $(".verineTableEditable tbody").append(createNewRow());
+        var maxHeight = $(".verineTableEditableViewport").get(0).scrollHeight;
+        $(".verineTableEditableViewport").scrollTop(maxHeight);
+
     });
 
     //Button: speichert die Daten
-    $("#btnSaveData").on("click", function () {
+    $("#btnSaveData").on("click", function() {
         CURRENT_VERINE_DATABASE.updateValues = checkForUpdates();
         CURRENT_VERINE_DATABASE.insertValues = checkForInserts();
         //persist data
@@ -222,7 +225,7 @@ $(document).ready(function () {
     });
 
     //Event: wenn eine Zelle der Tabelle angeklickt wird, wird diese editierbar gemacht
-    $(".verineTableEditable").on("click", "td", function (event) {
+    $(".verineTableEditable").on("click", "td", function(event) {
         event.preventDefault();
 
         $(this).attr("contenteditable", "true");
@@ -230,13 +233,13 @@ $(document).ready(function () {
     });
 
     //Event: wenn das X in einer Zeile angeklickt wird, wird diese entfernt
-    $(".verineTableEditable").on("click", ".verineRowDelete", function (event) {
+    $(".verineTableEditable").on("click", ".verineRowDelete", function(event) {
         var thisId = $(this).attr("id");
         CURRENT_VERINE_DATABASE.deleteValues = checkForDeletes(thisId);
     });
 
     //Event: gibt die ID des angeklickten TD aus
-    $(".verineTableEditable").on("input", "tbody td", function () {
+    $(".verineTableEditable").on("input", "tbody td", function() {
         console.log($(this).attr("id"));
 
     });
@@ -245,7 +248,7 @@ $(document).ready(function () {
     //Buttons im Reiter Datenbank Struktur
 
     //Button: Führt SQL Code auf der ausgewählten Datenbank aus
-    $("#btnDirectSql").on("click", function () {
+    $("#btnDirectSql").on("click", function() {
         let sqlCode = $("#txtDirectSql").val();
         let result = CURRENT_VERINE_DATABASE.runSqlCode(sqlCode);
         if (result.error == undefined) {
@@ -267,15 +270,15 @@ $(document).ready(function () {
         }
     });
 
-    $("#spanBtnCreate").on("click", function () {
+    $("#spanBtnCreate").on("click", function() {
         let createCommand = 'CREATE TABLE meine_tabelle (\n "id" INTEGER PRIMARY KEY,\n "first_name" TEXT NOT NULL,\n "last_name" TEXT NOT NULL,\n "email" TEXT NOT NULL UNIQUE,\n "phone" TEXT NOT NULL UNIQUE\n );';
         $("#txtDirectSql").val(createCommand);
     });
-    $("#spanBtnInsert").on("click", function () {
+    $("#spanBtnInsert").on("click", function() {
         let insertCommand = 'INSERT INTO meine_tabelle (first_name, last_name, email, phone)\nVALUES\n ("Richard", "Müller", "mueller@example.com", "080 654321")';
         $("#txtDirectSql").val(insertCommand);
     });
-    $("#spanBtnUpdate").on("click", function () {
+    $("#spanBtnUpdate").on("click", function() {
         let updateCommand = 'UPDATE meine_tabelle\nSET first_name = "Benni",\n last_name = "Geuder"\nWHERE id = 1;';
         $("#txtDirectSql").val(updateCommand);
     });
