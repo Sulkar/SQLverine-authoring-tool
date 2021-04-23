@@ -221,43 +221,28 @@
 
                 <!-- Tab: Vorschau -->
                 <div class="tab-pane fade" id="nav-preview" role="tabpanel" aria-labelledby="nav-preview-tab">
-                    <div class="row progressArea">
-                        <div class="progress">
-                            <div class="progress-bar progress-bar-striped bg-success" role="progressbar" style="width: 25%" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-                        </div>
-                    </div>
+                    
                     <div class="row exerciseContentArea">
-                        <h1>Überschrift zur Übung</h1>
+                        <h2 id="preview-title">Überschrift</h2>
                         <div class="exerciseDescription">
-                            <h2>Aufgabenstellung</h2>
-                            <p>Ich bin die Beschreibung zur Übung. Du sollst folgendes machen:</p>
-                            <ul>
-                                <li>Erstens...</li>
-                                <li>Zweitens...</li>
-                                <li>Drittens...</li>
-                            </ul>
+                            <div id="preview-description">
+                                Beschreibung
+                            </div>
+                            
                             <div class="card border-success col-sm-10">
                                 <div class="card-header">Hilfreiche Informationen</div>
-                                <div class="card-body text-dark">
-                                    <h5>Hier findest du eine Erklärung zum SELECT Befehl.</h5>
-                                    <p>Ich bin ein ganz toller Befehl und schaue so aus:</p>
-                                    <code>SELECT * FROM Tabelle1</code>
+                                <div class="card-body text-dark" id="preview-meta">
+                                    ...
                                 </div>
                             </div>
 
                         </div>
-                    </div>
-                    <div class="excerciceSubmitArea">
-                        <label for="txtAnswer" class="col-sm-2 col-form-label">Lösung:</label>
-                        <div class="col-sm-10">
-                            <input type="text" class="form-control" id="txtAnswer" placeholder="Die Antwort lautet...">
+                        <h3>Antworen</h3>
+                        <div id="preview-antworten">
+
                         </div>
-                        <button type="button" id="btnSubmitSolution" class="btn btn-success">Abgeben</button>
-
                     </div>
-
-
-
+                    
                 </div>
 
                 <!-- Tab: Daten bearbeiten -->

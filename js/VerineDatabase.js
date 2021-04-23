@@ -186,11 +186,6 @@ class VerineDatabase {
             answerObject.exerciseSolutionArray.push(exerciseSolution);
         });
 
-
-
-
-        console.log(answerObject);
-
         return answerObject;
     }
 

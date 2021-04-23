@@ -26,7 +26,8 @@ $(document).ready(function () {
             try {
                 CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.getExercises()[0][0];
                 fillExerciseSelect(CURRENT_EXERCISE_ID);
-                fillAuthoringToolWithExercise();
+                fillEditViewWithExercise();
+                fillPreviewViewWithExercise();
             } catch (err) {
                 console.log(err);
             }
@@ -56,7 +57,7 @@ $(document).ready(function () {
     }
 
 
-    var quillExerciseDescription = new Quill('#txtExerciseDescription', {
+    var quillExerciseDescription = new Quill('#nav-edit #txtExerciseDescription', {
         theme: 'snow',
         modules: {
             toolbar: {
@@ -69,7 +70,7 @@ $(document).ready(function () {
     });
 
 
-    var quillExcerciseMeta = new Quill('#txtExcerciseMeta', {
+    var quillExcerciseMeta = new Quill('#nav-edit #txtExcerciseMeta', {
         theme: 'snow',
         modules: {
             toolbar: {
@@ -81,7 +82,7 @@ $(document).ready(function () {
         },
     });
 
-    var quillFeedback = new Quill('#txtFeedback', {
+    var quillFeedback = new Quill('#nav-edit #txtFeedback', {
         theme: 'snow',
         modules: {
             toolbar: {
@@ -145,7 +146,8 @@ $(document).ready(function () {
     $("#btnSaveEdit").on("click", function () {
         updateExercise();
         fillExerciseSelect(CURRENT_EXERCISE_ID);
-        fillAuthoringToolWithExercise();
+        fillEditViewWithExercise();
+        fillPreviewViewWithExercise();
         //update edit table view
         CURRENT_VERINE_DATABASE.prepareTableData(null);
         $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
@@ -155,7 +157,8 @@ $(document).ready(function () {
     $(".btnNewExercise").on("click", function () {
         createExercise();
         fillExerciseSelect(CURRENT_EXERCISE_ID);
-        fillAuthoringToolWithExercise();
+        fillEditViewWithExercise();
+        fillPreviewViewWithExercise();
     });
 
     //Button: aktuelle Übung löschen
@@ -165,15 +168,19 @@ $(document).ready(function () {
             createExercise();
         }
         fillExerciseSelect(CURRENT_EXERCISE_ID);
-        fillAuthoringToolWithExercise();
+        fillEditViewWithExercise();
+        fillPreviewViewWithExercise();
     });
 
     //Select: Übungen werden ausgewählt
     $('#selectExercises').change(function () {
         CURRENT_EXERCISE_ID = $(this).val();
-        fillAuthoringToolWithExercise();
-        let tab = new bootstrap.Tab(document.querySelector('#nav-edit-tab'));
-        tab.show();
+        fillEditViewWithExercise();
+        fillPreviewViewWithExercise();
+        if ($(".tab-pane.active").attr("id") != "nav-preview") {
+            let tab = new bootstrap.Tab(document.querySelector('#nav-edit-tab'));
+            tab.show();
+        }        
     });
 
     //Button: Übung in der Liste eine Position nach oben schieben
@@ -217,7 +224,8 @@ $(document).ready(function () {
             $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
             //update Übungen > Editieren
             fillExerciseSelect(CURRENT_EXERCISE_ID);
-            fillAuthoringToolWithExercise();
+            fillEditViewWithExercise();
+            fillPreviewViewWithExercise();
         }
     });
 
@@ -322,18 +330,39 @@ $(document).ready(function () {
         CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.addExercise(newExercise, CURRENT_EXERCISE_ID);
     }
 
-    //function: Befüllt die Textfelder mit den Inhalten einer Übung
-    function fillAuthoringToolWithExercise() {
-        var currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+    //function: Befüllt die Textfelder im #nav-edit mit den Inhalten einer Übung
+    function fillEditViewWithExercise() {
+        let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
         if (!$.isEmptyObject(currentExercise)) {
-            $("#txtTitle").val(currentExercise.titel);
+            $("#nav-edit #txtTitle").val(he.decode(currentExercise.titel));
             let deltaExerciseDescription = quillExerciseDescription.clipboard.convert(he.decode(currentExercise.beschreibung));
             quillExerciseDescription.setContents(deltaExerciseDescription, 'silent');
             let deltaExcerciseMeta = quillExcerciseMeta.clipboard.convert(he.decode(currentExercise.informationen));
             quillExcerciseMeta.setContents(deltaExcerciseMeta, 'silent');
-            $("#txtAnswers").val(currentExercise.antworten);
+            $("#nav-edit #txtAnswers").val(he.decode(currentExercise.antworten));
             let deltaFeedback = quillFeedback.clipboard.convert(he.decode(currentExercise.feedback));
             quillFeedback.setContents(deltaFeedback, 'silent');
+        }
+        
+    }
+    //function: Befüllt die Textfelder im #nav-preview mit den Inhalten einer Übung
+    function fillPreviewViewWithExercise() {
+        let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+        if (!$.isEmptyObject(currentExercise)) {
+            $("#nav-preview #preview-title").html(he.decode(currentExercise.titel));
+            $("#nav-preview #preview-description").html(he.decode(currentExercise.beschreibung));
+            $("#nav-preview #preview-meta").html(he.decode(currentExercise.informationen));
+            //zeigt Antworten der Übung geparst an:
+            let exerciseAnswer = "";
+            exerciseAnswer += "Anzahl Lösungszeilen: " + currentExercise.answerObject.rows + "<br>";
+            if(currentExercise.answerObject.input) exerciseAnswer += "Inputfeld <br>";
+            currentExercise.answerObject.exerciseSolutionArray.forEach(solution => {
+                exerciseAnswer += "<hr>";
+                exerciseAnswer += "Antwort: " + solution.loesungString + "<br>";;
+                if(solution.table != undefined) exerciseAnswer += "Tabelle: " + solution.table + "<br>";;
+                if(solution.column != undefined) exerciseAnswer += "Spalte: " + solution.column + "<br>";;
+            });            
+            $("#nav-preview #preview-antworten").html(exerciseAnswer);
         }
     }
 
@@ -364,7 +393,7 @@ $(document).ready(function () {
         CURRENT_VERINE_DATABASE.getExerciseOrder().forEach(order => {
             CURRENT_VERINE_DATABASE.getExercises().forEach(exercise => {
                 if (order[1] == exercise[0]) {
-                    $("#selectExercises").append(new Option(exercise[2], exercise[0]));
+                    $("#selectExercises").append(new Option(he.decode(exercise[2]), exercise[0]));
                 }
             });
         });
