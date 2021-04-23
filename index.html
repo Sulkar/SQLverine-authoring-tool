@@ -26,8 +26,7 @@
     <meta name="msapplication-TileImage" content="icons/ms-icon-144x144.png">
     <meta name="theme-color" content="#ffffff">
 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet"
-        integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BmbxuPwQa2lc/FVzBcNJ7UAyJxM6wuqIj61tLrc4wSX0szH/Ev+nYRRuWlolflfl" crossorigin="anonymous">
 
     <link href="https://cdn.quilljs.com/1.3.6/quill.snow.css" rel="stylesheet">
     <link rel="stylesheet" href="css/sql-editor.css">
@@ -45,8 +44,7 @@
                 <span style="float: right; display:none;"><input id="displayDebug" type="checkbox"> <label
                         for="displayDebug">debug</label></span>
                 <h2 id="headerSql">
-                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
-                        width="2em" viewBox="0,0,436.36684,267.67784">
+                    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="2em" viewBox="0,0,436.36684,267.67784">
                         <g transform="translate(-81.81658,-66.37462)">
                             <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill-rule="nonzero"
                                 stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray="" stroke-dashoffset="0"
@@ -79,16 +77,17 @@
                         <option value="init">Datenbank</option>
                     </select>
 
-                    <button id="btnDbRename" class="btnDbRename d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
-                        umbenennen
+                    <button id="btnDbRename" class="btnDbRename d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Rename Database">
+                        Umbenennen
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
+                            <path d="M12.146.146a.5.5 0 0 1 .708 0l3 3a.5.5 0 0 1 0 .708l-10 10a.5.5 0 0 1-.168.11l-5 2a.5.5 0 0 1-.65-.65l2-5a.5.5 0 0 1 .11-.168l10-10zM11.207 2.5 13.5 4.793 14.793 3.5 12.5 1.207 11.207 2.5zm1.586 3L10.5 3.207 4 9.707V10h.5a.5.5 0 0 1 .5.5v.5h.5a.5.5 0 0 1 .5.5v.5h.293l6.5-6.5zm-9.761 5.175-.106.106-1.528 3.821 3.821-1.528.106-.106A.5.5 0 0 1 5 12.5V12h-.5a.5.5 0 0 1-.5-.5V11h-.5a.5.5 0 0 1-.468-.325z"/>
+                          </svg>
                     </button>
 
 
-                    <label for="fileDbUpload" class="fileUpload" data-toggle="tooltip" data-placement="top"
-                        title="Upload Database">
+                    <label for="fileDbUpload" class="fileUpload" data-toggle="tooltip" data-placement="top" title="Upload Database">
                         Datenbank öffnen
-                        <svg xmlns="http://www.w3.org/2000/svg" width="1.3em" height="1.3em" fill="currentColor"
+                        <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                             class="bi bi-file-earmark-arrow-up" viewBox="0 0 16 16">
                             <path
                                 d="M8.5 11.5a.5.5 0 0 1-1 0V7.707L6.354 8.854a.5.5 0 1 1-.708-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8.5 7.707V11.5z" />
@@ -100,8 +99,7 @@
                     <input id="fileDbUpload" type="file" />
 
 
-                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
+                    <button id="btnDbDownload" class="btnDbDownload d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                         Datenbank speichern
                         <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                             class="bi bi-file-earmark-arrow-down" viewBox="0 0 16 16">
@@ -115,10 +113,21 @@
                     </button>
 
 
-                    <button id="btnDbNew" class="btnDbNew d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
-                        neue Datenbank
-
+                    <button id="btnDbNew" class="btnDbNew d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
+                        Neue Datenbank
+                        <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
+                        width="1.2em" height="1.2em" fill="currentColor" viewBox="0,0,12,16">
+                        <g transform="translate(-294,-191.02041)">
+                            <g data-paper-data="{&quot;isPaintingLayer&quot;:true}" fill="slategrey"
+                                fill-rule="nonzero" stroke="none" stroke-width="1" stroke-linecap="butt"
+                                stroke-linejoin="miter" stroke-miterlimit="10" stroke-dasharray=""
+                                stroke-dashoffset="0" style="mix-blend-mode: normal"></g>
+                            <path
+                                d="M300,196.61224c0.23388,0 0.42347,0.18959 0.42347,0.42347v2.54082h2.54082c0.23388,0 0.42347,0.18959 0.42347,0.42347c0,0.23388 -0.18959,0.42347 -0.42347,0.42347h-2.54082v2.54082c0,0.23388 -0.18959,0.42347 -0.42347,0.42347c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347v-2.54082h-2.54082c-0.23388,0 -0.42347,-0.18959 -0.42347,-0.42347c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347h2.54082v-2.54082c0,-0.23388 0.18959,-0.42347 0.42347,-0.42347z" />
+                            <path
+                                d="M304,207.02041h-8c-1.10457,0 -2,-0.89543 -2,-2v-12c0,-1.10457 0.89543,-2 2,-2h5.5l4.5,4.5v9.5c0,1.10457 -0.89543,2 -2,2zM301.5,192.02041h-5.5c-0.55228,0 -1,0.44772 -1,1v12c0,0.55228 0.44772,1 1,1h8c0.55228,0 1,-0.44772 1,-1v-9.5h-2c-0.82843,0 -1.5,-0.67157 -1.5,-1.5z" />
+                        </g>
+                    </svg>
                     </button>
 
 
@@ -138,16 +147,14 @@
 
             </select>
             <div class="btn-group mb-3 contentMenu">
-                <button id="btnNewExercise" class="btnNewExercise btn btn-outline-secondary" data-toggle="tooltip"
-                    data-placement="top" title="Neue Übungseinheit">
+                <button id="btnNewExercise" class="btnNewExercise btn btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="Neue Übungseinheit">
                     <svg xmlns="http://www.w3.org/2000/svg" width="1.2em" height="1.2em" fill="currentColor"
                         class="bi bi-plus" viewBox="0 0 16 16">
                         <path
                             d="M8 4a.5.5 0 0 1 .5.5v3h3a.5.5 0 0 1 0 1h-3v3a.5.5 0 0 1-1 0v-3h-3a.5.5 0 0 1 0-1h3v-3A.5.5 0 0 1 8 4z" />
                     </svg>
                 </button>
-                <button id="btnDeleteExercise" class="btnDeleteExercise btn btn-outline-secondary" data-toggle="tooltip"
-                    data-placement="top" title="Übungseinheit löschen">
+                <button id="btnDeleteExercise" class="btnDeleteExercise btn btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="Übungseinheit löschen">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-x"
                         viewBox="0 0 16 16">
                         <path
@@ -155,16 +162,14 @@
                     </svg>
                 </button>
                 <!--buttons moveExerciseUp / Down-->
-                <button id="btnMoveExerciseUp" class="btnMoveExerciseUp btn btn-outline-secondary" data-toggle="tooltip"
-                    data-placement="top" title="Nach oben schieben">
+                <button id="btnMoveExerciseUp" class="btnMoveExerciseUp btn btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="Nach oben schieben">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-arrow-up" viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
                             d="M8 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L7.5 2.707V14.5a.5.5 0 0 0 .5.5z" />
                     </svg>
                 </button>
-                <button id="btnMoveExerciseDown" class="btnMoveExerciseDown btn btn-outline-secondary"
-                    data-toggle="tooltip" data-placement="top" title="Nach unten schieben">
+                <button id="btnMoveExerciseDown" class="btnMoveExerciseDown btn btn-outline-secondary" data-toggle="tooltip" data-placement="top" title="Nach unten schieben">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor"
                         class="bi bi-arrow-down" viewBox="0 0 16 16">
                         <path fill-rule="evenodd"
@@ -178,16 +183,11 @@
             <h2>Übungen</h2>
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-link active" id="nav-edit-tab" data-bs-toggle="tab" data-bs-target="#nav-edit"
-                        type="button" role="tab" aria-controls="nav-edit" aria-selected="true">Editieren</button>
-                    <button class="nav-link" id="nav-preview-tab" data-bs-toggle="tab" data-bs-target="#nav-preview"
-                        type="button" role="tab" aria-controls="nav-preview" aria-selected="false">Vorschau</button>
-                    <button class="nav-link" id="nav-tableEdit-tab" data-bs-toggle="tab" data-bs-target="#nav-tableEdit"
-                        type="button" role="tab" aria-controls="nav-tableEdit" aria-selected="false">Daten
+                    <button class="nav-link active" id="nav-edit-tab" data-bs-toggle="tab" data-bs-target="#nav-edit" type="button" role="tab" aria-controls="nav-edit" aria-selected="true">Editieren</button>
+                    <button class="nav-link" id="nav-preview-tab" data-bs-toggle="tab" data-bs-target="#nav-preview" type="button" role="tab" aria-controls="nav-preview" aria-selected="false">Vorschau</button>
+                    <button class="nav-link" id="nav-tableEdit-tab" data-bs-toggle="tab" data-bs-target="#nav-tableEdit" type="button" role="tab" aria-controls="nav-tableEdit" aria-selected="false">Daten
                         bearbeiten</button>
-                    <button class="nav-link" id="nav-databaseStructure-tab" data-bs-toggle="tab"
-                        data-bs-target="#nav-databaseStructure" type="button" role="tab"
-                        aria-controls="nav-databaseStructure" aria-selected="false">Datenbank Struktur</button>
+                    <button class="nav-link" id="nav-databaseStructure-tab" data-bs-toggle="tab" data-bs-target="#nav-databaseStructure" type="button" role="tab" aria-controls="nav-databaseStructure" aria-selected="false">Datenbank Struktur</button>
 
                 </div>
             </nav>
@@ -203,12 +203,10 @@
                         </div>
                         <div class="row edt-row">
 
-                            <label for="txtExerciseDescription"
-                                class="col-sm-2 col-form-label">Übungsbeschreibung:</label>
+                            <label for="txtExerciseDescription" class="col-sm-2 col-form-label">Übungsbeschreibung:</label>
 
                             <div class="col-sm-10">
-                                <div id="txtExerciseDescription"
-                                    placeholder="Das ist in dieser Übungseinheit zu machen...">
+                                <div id="txtExerciseDescription" placeholder="Das ist in dieser Übungseinheit zu machen...">
                                 </div>
                             </div>
 
@@ -225,8 +223,7 @@
                         <div class="row edt-row">
                             <label for="txtAnswers" class="col-sm-2 col-form-label">Antwort(en):</label>
                             <div class="col-sm-10">
-                                <input type="text" class="form-control" id="txtAnswers"
-                                    placeholder="Antwort1|Antwort2|Antwort3|...">
+                                <input type="text" class="form-control" id="txtAnswers" placeholder="Antwort1|Antwort2|Antwort3|...">
                             </div>
                         </div>
                         <div class="row edt-row">
@@ -238,9 +235,7 @@
                         <br><br>
                         <div class="row">
                             <div class="col">
-                                <button id="btnSaveEdit"
-                                    class="btnSave btn btn-outline-success d-none d-md-inline-block"
-                                    data-toggle="tooltip" data-placement="top" title="Download Database">
+                                <button id="btnSaveEdit" class="btnSave btn btn-outline-success d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                                     speichern
                                 </button>
                             </div>
@@ -251,9 +246,7 @@
                         <h3 id="no-exercise-info"></h3>
                         <div class="row">
                             <div class="col text-center">
-                                <button id="btnCreateVerineTable"
-                                    class="btnCreateVerineTable btn btn-outline-success d-none d-md-inline-block"
-                                    data-toggle="tooltip" data-placement="top" title="Download Database">
+                                <button id="btnCreateVerineTable" class="btnCreateVerineTable btn btn-outline-success d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                                     Übungstabelle anlegen
                                 </button>
                             </div>
@@ -300,37 +293,30 @@
                         </table>
                     </div>
 
-                    <button id="btnAddRow" class="btnSave d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
+                    <button id="btnAddRow" class="btnSave btn btn btn-outline-primary d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                         neue Zeile
                     </button>
 
-                    <button id="btnSaveData" class="btnSave d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
+                    <button id="btnSaveData" class="btnSave btn btn-outline-success d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                         Daten speichern
                     </button>
                 </div>
 
                 <!-- Tab: Datenbank Struktur -->
-                <div class="tab-pane fade" id="nav-databaseStructure" role="tabpanel"
-                    aria-labelledby="nav-databaseStructure-tab">
+                <div class="tab-pane fade" id="nav-databaseStructure" role="tabpanel" aria-labelledby="nav-databaseStructure-tab">
                     <div class="bd-example">
                         <p>Hier können SQL Befehle direkt auf die ausgewählte Datenbank ausgeführt werden:</p>
-                        <span id="spanBtnCreate" class="spanBtn">Create Table</span>&nbsp;-&nbsp;<span
-                            id="spanBtnInsert" class="spanBtn">Insert Data</span>&nbsp;-&nbsp;<span id="spanBtnUpdate"
-                            class="spanBtn">Update Data</span>
+                        <span id="spanBtnCreate" class="spanBtn">Create Table</span>&nbsp;-&nbsp;<span id="spanBtnInsert" class="spanBtn">Insert Data</span>&nbsp;-&nbsp;<span id="spanBtnUpdate" class="spanBtn">Update Data</span>
                         <textarea id="txtDirectSql" rows="10" style="width: 100%;" placeholder=""></textarea>
                     </div>
 
-                    <button id="btnDirectSql" class="btnDirectSql d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
+                    <button id="btnDirectSql" class="btnDirectSql btn btn-outline-success d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">
                         SQL ausführen
                     </button>
 
                     <div class="bd-example">
                         <p>Ausgabe:</p>
-                        <textarea id="txtQueryResult" rows="10" style="width: 100%; display: none;"
-                            placeholder=""></textarea>
+                        <textarea id="txtQueryResult" rows="10" style="width: 100%; display: none;" placeholder=""></textarea>
                         <div id="divQueryResult" style="display: none;"></div>
                     </div>
 
@@ -344,8 +330,7 @@
     </div>
 
     <!-- Modal -->
-    <div class="modal fade" id="universal-modal" tabindex="-1" aria-labelledby="universal-modal-label"
-        aria-hidden="true">
+    <div class="modal fade" id="universal-modal" tabindex="-1" aria-labelledby="universal-modal-label" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -366,9 +351,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js">
     </script>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js"
-        integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
-        </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0-beta2/dist/js/bootstrap.bundle.min.js" integrity="sha384-b5kHyXgcpbZJO/tY9Ul7kGkf1S0CWuKcCD38l8YkeH8z8QjE0GmW1gYU5S9FOnJ0" crossorigin="anonymous">
+    </script>
 
     <script type="text/javascript" src="js/he.js"></script>
 

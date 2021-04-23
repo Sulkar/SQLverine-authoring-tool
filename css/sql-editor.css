@@ -137,6 +137,7 @@ div.col.centerMenu {
 .dbHandlingMenu label.fileUpload,
 .dbHandlingMenu button.btnDbDownload,
 .dbHandlingMenu button.btnDbNew,
+.dbHandlingMenu button.btnDbRename,
 .dbHandlingMenu button.btnHamburgerNav {
     display: inline-block;
     padding: 0.35em 1.0em 0.15em;
@@ -155,6 +156,7 @@ div.col.centerMenu {
 .dbHandlingMenu .hamburgerNav label.fileUpload,
 .dbHandlingMenu .hamburgerNav button.btnDbDownload,
 .dbHandlingMenu .hamburgerNav button.btnDbNew,
+.dbHandlingMenu .hamburgerNav button.btnDbRename,
 .dbHandlingMenu .hamburgerNav button.btnHamburgerNav {
     display: inline-block;
     padding: 0.35em 1.0em 0.15em;
@@ -242,6 +244,14 @@ div.col.centerMenu {
 .buttonArea button.sqlUpdate,
 .buttonArea button.sqlInsert {
     border-bottom: 0.15em solid steelblue;
+}
+
+.btnDeleteExercise {
+    color: #dc3545;
+}
+
+.btnNewExercise {
+    color: rgb(25, 135, 84);
 }
 
 
