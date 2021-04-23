@@ -191,9 +191,11 @@ class VerineDatabase {
 
     addExercise(newExercise, currentExcersiseId) {
         let errorLogArray = [];
+        this.exerciseTable = this.getExerciseTable();
         //INSERT INTO pokemon(name, nr, größe, gewicht) VALUES("Pikachu", 3, 34, 4)
-        let exerciseValues = '"' + newExercise.titel + '", "' + newExercise.reihenfolge + '", "' + newExercise.beschreibung + '", "' + newExercise.informationen + '", "' + newExercise.antworten + '", "' + newExercise.feedback + '"';
+        let exerciseValues = '"' + newExercise.titel + '", ' + parseInt(newExercise.reihenfolge) + ', "' + newExercise.beschreibung + '", "' + newExercise.informationen + '", "' + newExercise.antworten + '", "' + newExercise.feedback + '"';
         let addExerciseQuery = 'INSERT INTO ' + this.exerciseTable + ' (titel, reihenfolge, beschreibung, informationen, antworten, feedback) VALUES (' + exerciseValues + ');';
+        console.log(addExerciseQuery)
         try {
             this.database.exec(addExerciseQuery);
         } catch (err) {
