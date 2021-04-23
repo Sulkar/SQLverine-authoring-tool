@@ -119,10 +119,13 @@ class VerineDatabase {
 
     getTables() {
         let tableNamesArray = [];
-        let tableData = this.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'")[0].values;
-        tableData.forEach(data => {
-            tableNamesArray.push(data[0]);
-        });
+        let ececuteSQL = this.database.exec("SELECT name FROM sqlite_master WHERE type = 'table' AND name NOT LIKE 'sqlite_%'");
+        if (ececuteSQL.length > 0) {
+            let tableData = ececuteSQL[0].values;
+            tableData.forEach(data => {
+                tableNamesArray.push(data[0]);
+            });
+        }
         return tableNamesArray;
     }
 
@@ -195,7 +198,6 @@ class VerineDatabase {
         //INSERT INTO pokemon(name, nr, größe, gewicht) VALUES("Pikachu", 3, 34, 4)
         let exerciseValues = '"' + newExercise.titel + '", ' + parseInt(newExercise.reihenfolge) + ', "' + newExercise.beschreibung + '", "' + newExercise.informationen + '", "' + newExercise.antworten + '", "' + newExercise.feedback + '"';
         let addExerciseQuery = 'INSERT INTO ' + this.exerciseTable + ' (titel, reihenfolge, beschreibung, informationen, antworten, feedback) VALUES (' + exerciseValues + ');';
-        console.log(addExerciseQuery)
         try {
             this.database.exec(addExerciseQuery);
         } catch (err) {

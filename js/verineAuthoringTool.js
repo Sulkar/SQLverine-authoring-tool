@@ -3,8 +3,8 @@ $(document).ready(function () {
     /////////////
     // GLOBALS //
     var CURRENT_EXERCISE_ID = 1;
-    var EXERCISE_ARRAY = [];
-
+    var NEW_DATABASE_COUNTER = 1;
+    var MAX_DATABASE_COUNTER = 5;
     var CURRENT_VERINE_DATABASE; //aktuell geladene DB
     var DATABASE_ARRAY = [];
     var CURRENT_DATABASE_INDEX = 0;
@@ -45,7 +45,6 @@ $(document).ready(function () {
         }
     }
 
-
     var quillExerciseDescription = new Quill('#nav-edit #txtExerciseDescription', {
         theme: 'snow',
         modules: {
@@ -57,7 +56,6 @@ $(document).ready(function () {
             }
         },
     });
-
 
     var quillExcerciseMeta = new Quill('#nav-edit #txtExcerciseMeta', {
         theme: 'snow',
@@ -86,6 +84,21 @@ $(document).ready(function () {
     ////////////
     // EVENTs //
 
+    //Button: öffnet ein Modal für das Umbenennen der aktuellen Datenbank.    
+    $("#btnDbRename").click(function () {
+        $("#universal-modal").modal('toggle');
+        $("#universal-modal .modal-title").html("Datenbank umbenennen");
+        $("#universal-modal .modal-body").html("<input type='text' id='inputRenameDatabase' class='form-control input-check' aria-label='' aria-describedby='' value='" + CURRENT_VERINE_DATABASE.name + "'>");
+        $("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">abbrechen</button><button type="button" id="btnRenameAccept" class="btn btn-primary">Änderung speichern</button>');
+    });
+    $("#universal-modal").on('click', '#btnRenameAccept', function () {
+        CURRENT_VERINE_DATABASE.name = $("#inputRenameDatabase").val();
+        updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
+        $("#universal-modal").modal('toggle');
+    });
+
+
+
     // Datenbankdatei wurde zum Upload ausgewählt
     $("#fileDbUpload").on('change', function () {
         var uploadedFile = this.files[0];
@@ -93,7 +106,6 @@ $(document).ready(function () {
         var fileReader = new FileReader();
         fileReader.onload = function () {
             init(fileReader.result).then(function (initObject) {
-
 
                 let uploadedFileName = buildDatabaseName(uploadedFile.name, null);
                 let verineDatabase = new VerineDatabase(uploadedFileName, initObject, "local");
@@ -131,6 +143,50 @@ $(document).ready(function () {
         a.click();
     });
 
+    //Button: erstellt eine neue Datenbank anhand der verfügbaren Platzhalterdatenbanken
+    $(".btnDbNew").click(function () {
+
+        if (NEW_DATABASE_COUNTER <= MAX_DATABASE_COUNTER) {
+            init(fetch("data/newDB_" + NEW_DATABASE_COUNTER + ".db").then(res => res.arrayBuffer())).then(function (initObject) {
+                CURRENT_VERINE_DATABASE = new VerineDatabase("neue Datenbank_" + NEW_DATABASE_COUNTER + ".db", initObject, "local");
+                NEW_DATABASE_COUNTER++;
+                DATABASE_ARRAY.push(CURRENT_VERINE_DATABASE);
+                CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
+
+                updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
+                let tempTables = CURRENT_VERINE_DATABASE.getTables();
+                updateTableChooser(tempTables[0], tempTables);
+
+                //sucht nach verine_exercises Tabelle
+                handleDatabaseExercises(tempTables);
+            }, function (error) { console.log(error) });
+
+        } else {
+            $("#universal-modal").modal('toggle');
+            $("#universal-modal .modal-title").html("neue Datenbank erstellen");
+            $("#universal-modal .modal-body").html("<p>Leider ist die maximale Anzahl von Datenbanken erreicht. Es können keine weiteren erstellt werden. Lade Datenbanken herunter, um diese permanent zu speichern.</p>");
+            $("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">OK</button>');
+        }
+
+    });
+
+    //Button: wenn auf die Tabs geklickt wird
+    $("#nav-tab button").click(function () {
+        //save current exercise
+        updateExercise();
+        //set current selected as new exercise id
+        fillExerciseSelect(CURRENT_EXERCISE_ID);
+        fillEditViewWithExercise();
+        fillPreviewViewWithExercise();
+        //update edit table view
+        CURRENT_VERINE_DATABASE.prepareTableData(null);
+        $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
+    });
+
+    ////////////////////////////////////
+    //Buttons im Reiter Übungen Editieren
+
+    //Button: neue verince_exercise Tabelle erstellen
     $("#btnCreateVerineTable").click(function () {
         CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_exercises ("id" INTEGER PRIMARY KEY, "reihenfolge" INTEGER NOT NULL, "titel" TEXT NOT NULL, "beschreibung" TEXT NOT NULL, "informationen" TEXT NOT NULL, "antworten" TEXT NOT NULL, "feedback" TEXT NOT NULL);');
 
@@ -138,9 +194,6 @@ $(document).ready(function () {
         updateTableChooser(tempTables[0], tempTables);
         handleDatabaseExercises(tempTables);
     });
-
-    ////////////////////////////////////
-    //Buttons im Reiter Übungen Editieren
 
     //Button: Speichern
     $("#btnSaveEdit").on("click", function () {
@@ -174,9 +227,16 @@ $(document).ready(function () {
 
     //Select: Übungen werden ausgewählt
     $('#selectExercises').change(function () {
+        //save current exercise
+        updateExercise();
+        //set current selected as new exercise id
         CURRENT_EXERCISE_ID = $(this).val();
+        fillExerciseSelect(CURRENT_EXERCISE_ID);
         fillEditViewWithExercise();
         fillPreviewViewWithExercise();
+        //update edit table view
+        CURRENT_VERINE_DATABASE.prepareTableData(null);
+        $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
         if ($(".tab-pane.active").attr("id") != "nav-preview") {
             let tab = new bootstrap.Tab(document.querySelector('#nav-edit-tab'));
             tab.show();
@@ -195,6 +255,10 @@ $(document).ready(function () {
         fillExerciseSelect(CURRENT_EXERCISE_ID);
     });
 
+
+    ////////////////////////////////////
+    //Buttons im Reiter Daten bearbeiten
+
     // Select: Tabelle wird ausgewählt
     $('#selTableChooser').on('change', function () {
         CURRENT_VERINE_DATABASE.prepareTableData(this.value);
@@ -202,9 +266,6 @@ $(document).ready(function () {
         let tab = new bootstrap.Tab(document.querySelector('#nav-tableEdit-tab'));
         tab.show();
     });
-
-    ////////////////////////////////////
-    //Buttons im Reiter Daten bearbeiten
 
     //Button: fügt am Ende der Tabelle eine neue Zeile ein
     $("#btnAddRow").on("click", function () {
@@ -317,7 +378,6 @@ $(document).ready(function () {
             if (currentExercise.feedback != quillFeedback.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "feedback", he.encode(quillFeedback.root.innerHTML)]);
             CURRENT_VERINE_DATABASE.updateExercise(exerciseUpdateArray);
         }
-
     }
 
     //function: erstellt ein neues Übungs Objekt mit ID und Standardnamen
@@ -443,7 +503,7 @@ $(document).ready(function () {
         if (selected != null) $("#selDbChooser").val(selected);
     }
 
-
+    //function: Zeigt im Editieren Tab die Information an, dass keine verine_exercises Tabelle gefunden wurde + Button, um diese Tabelle zu erzeugen.
     function displayNoVerineExercise() {
         $("#selectExercises").html("");
         $("#nav-edit .yes-exercise").hide();
@@ -453,8 +513,7 @@ $(document).ready(function () {
 
     }
 
-
-
+    //function: Befüllt die Tabs, Aufgabenauswahl... wenn verine exercises vorhanden sind.
     function handleDatabaseExercises(tempTables) {
         if (tempTables.includes("verine_exercises")) {
             try {
@@ -474,11 +533,11 @@ $(document).ready(function () {
                 console.log(err);
             }
         } else {
-            console.log("not found")
             displayNoVerineExercise();
         }
     }
 
+    //Select: Wenn eine Datenbank im <select> ausgewählt wurde
     $('#selDbChooser').on('change', function () {
         CURRENT_DATABASE_INDEX = getIndexOfDatabaseobject(this.value);
 
@@ -491,36 +550,6 @@ $(document).ready(function () {
             //sucht nach verine_exercises Tabelle
             handleDatabaseExercises(tempTables);
         }
-
-
-
-
-        // 2) Datenbank ist auf dem Server und muss noch eingelesen werden
-        /*else if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX].type == "server") {
-            init(fetch("data/" + DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name).then(res => res.arrayBuffer())).then(function (initObject) {
-
-                CURRENT_VERINE_DATABASE = new VerineDatabase(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name, initObject[0], "server");
-                CURRENT_SQL_DATABASE = initObject[0];
-                ACTIVE_CODE_VIEW_DATA = initObject[1];
-
-                DATABASE_ARRAY[CURRENT_DATABASE_INDEX].database = CURRENT_SQL_DATABASE;
-
-                updateActiveCodeView();
-
-                // zeigt das Datenbankschema an
-                var tempTables = getSqlTables();
-
-                $(".schemaArea").html(createTableInfo(tempTables, "1,2"));
-
-                let exercises = CURRENT_VERINE_DATABASE.getExercises();
-                if (exercises.length > 0) {
-                    CURRENT_EXERCISE_ID = 1;
-                    CURRENT_EXERCISE = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
-                    updateExercise();
-                }
-
-            }, function (error) { console.log(error) });
-        }*/
     });
 
     // function: liefert den Index eines Datenbankobjekts aus dem DATABASE_ARRAY anhand des Namens zurück
