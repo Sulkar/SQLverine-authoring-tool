@@ -65,6 +65,18 @@ $(document).ready(function () {
         },
     });
 
+    var quillExerciseTask = new Quill('#nav-edit #txtExerciseTask', {
+        theme: 'snow',
+        modules: {
+            toolbar: {
+                container: myToolbar,
+                handlers: {
+                    image: imageHandler
+                }
+            }
+        },
+    });
+
     var quillExcerciseMeta = new Quill('#nav-edit #txtExcerciseMeta', {
         theme: 'snow',
         modules: {
@@ -196,7 +208,7 @@ $(document).ready(function () {
 
     //Button: neue verince_exercise Tabelle erstellen
     $("#btnCreateVerineTable").click(function () {
-        CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_exercises ("id" INTEGER PRIMARY KEY, "reihenfolge" INTEGER NOT NULL, "titel" TEXT NOT NULL, "beschreibung" TEXT NOT NULL, "informationen" TEXT NOT NULL, "antworten" TEXT NOT NULL, "feedback" TEXT NOT NULL);');
+        CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_exercises ("id" INTEGER PRIMARY KEY, "reihenfolge" INTEGER NOT NULL, "titel" TEXT NOT NULL, "beschreibung" TEXT NOT NULL, "aufgabenstellung" TEXT NOT NULL, "informationen" TEXT NOT NULL, "antworten" TEXT NOT NULL, "feedback" TEXT NOT NULL, "geloest" INTEGER NOT NULL);');
 
         let tempTables = CURRENT_VERINE_DATABASE.getTables();
         updateTableChooser(tempTables[0], tempTables);
@@ -383,6 +395,7 @@ $(document).ready(function () {
             let exerciseUpdateArray = [];
             if (currentExercise.titel != $("#txtTitle").val()) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "titel", $("#txtTitle").val()]);
             if (currentExercise.beschreibung != he.encode(quillExerciseDescription.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "beschreibung", he.encode(quillExerciseDescription.root.innerHTML)]);
+            if (currentExercise.aufgabenstellung != he.encode(quillExerciseTask.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "aufgabenstellung", he.encode(quillExerciseTask.root.innerHTML)]);
             if (currentExercise.informationen != he.encode(quillExcerciseMeta.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "informationen", he.encode(quillExcerciseMeta.root.innerHTML)]);
             if (currentExercise.antworten != $("#txtAnswers").val()) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "antworten", $("#txtAnswers").val()]);
             if (currentExercise.feedback != he.encode(quillFeedback.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "feedback", he.encode(quillFeedback.root.innerHTML)]);
@@ -404,9 +417,11 @@ $(document).ready(function () {
         else newExercise.reihenfolge = 1;
         newExercise.titel = "neue Übung";
         newExercise.beschreibung = "";
+        newExercise.aufgabenstellung = "";
         newExercise.informationen = "";
         newExercise.antworten = "";
         newExercise.feedback = "";
+        newExercise.geloest = 0;
         CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.addExercise(newExercise, CURRENT_EXERCISE_ID);
     }
 
@@ -414,9 +429,12 @@ $(document).ready(function () {
     function fillEditViewWithExercise() {
         let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
         if (!$.isEmptyObject(currentExercise)) {
+            console.log(currentExercise)
             $("#nav-edit #txtTitle").val(he.decode(currentExercise.titel));
             let deltaExerciseDescription = quillExerciseDescription.clipboard.convert(he.decode(currentExercise.beschreibung));
             quillExerciseDescription.setContents(deltaExerciseDescription, 'silent');
+            let deltaExerciseTask = quillExerciseTask.clipboard.convert(he.decode(currentExercise.aufgabenstellung));
+            quillExerciseTask.setContents(deltaExerciseTask, 'silent');
             let deltaExcerciseMeta = quillExcerciseMeta.clipboard.convert(he.decode(currentExercise.informationen));
             quillExcerciseMeta.setContents(deltaExcerciseMeta, 'silent');
             $("#nav-edit #txtAnswers").val(he.decode(currentExercise.antworten));
@@ -431,6 +449,7 @@ $(document).ready(function () {
         if (!$.isEmptyObject(currentExercise)) {
             $("#nav-preview #preview-title").html(he.decode(currentExercise.titel));
             $("#nav-preview #preview-description").html(he.decode(currentExercise.beschreibung));
+            $("#nav-preview #preview-task").html(he.decode(currentExercise.aufgabenstellung));
             $("#nav-preview #preview-meta").html(he.decode(currentExercise.informationen));
             //zeigt Antworten der Übung geparst an:
             let exerciseAnswer = "";
