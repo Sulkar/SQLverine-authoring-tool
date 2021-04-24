@@ -9,6 +9,14 @@ $(document).ready(function () {
     var DATABASE_ARRAY = [];
     var CURRENT_DATABASE_INDEX = 0;
     var CSS_COLOR_ARRAY = ["coral", "tomato", "orange", "gold", "palegreen", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
+    var CHANGED = false;
+
+    //Wenn etwas geändert wurde, wird beim Verlassen der Website nachgefragt, ob man die Seite wirklich verlassen will.
+    window.onbeforeunload = function () {
+        if (CHANGED) {
+            return "";
+        }
+    }
 
     // START: erste Datenbank wird geladen
     init(fetch("data/Grundschule.db").then(res => res.arrayBuffer())).then(function (initObject) {
@@ -283,6 +291,7 @@ $(document).ready(function () {
         if (CURRENT_VERINE_DATABASE.persist().length > 0) {
             console.log("error persist");
         } else {
+            CHANGED = true;
             //update table view
             CURRENT_VERINE_DATABASE.prepareTableData(null);
             $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
@@ -370,13 +379,19 @@ $(document).ready(function () {
     function updateExercise() {
         var currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
         if (!$.isEmptyObject(currentExercise)) {
+
             let exerciseUpdateArray = [];
             if (currentExercise.titel != $("#txtTitle").val()) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "titel", $("#txtTitle").val()]);
-            if (currentExercise.beschreibung != quillExerciseDescription.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "beschreibung", he.encode(quillExerciseDescription.root.innerHTML)]);
-            if (currentExercise.informationen != quillExcerciseMeta.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "informationen", he.encode(quillExcerciseMeta.root.innerHTML)]);
+            if (currentExercise.beschreibung != he.encode(quillExerciseDescription.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "beschreibung", he.encode(quillExerciseDescription.root.innerHTML)]);
+            if (currentExercise.informationen != he.encode(quillExcerciseMeta.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "informationen", he.encode(quillExcerciseMeta.root.innerHTML)]);
             if (currentExercise.antworten != $("#txtAnswers").val()) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "antworten", $("#txtAnswers").val()]);
-            if (currentExercise.feedback != quillFeedback.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "feedback", he.encode(quillFeedback.root.innerHTML)]);
-            CURRENT_VERINE_DATABASE.updateExercise(exerciseUpdateArray);
+            if (currentExercise.feedback != he.encode(quillFeedback.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "feedback", he.encode(quillFeedback.root.innerHTML)]);
+            //gibt es Änderungen?
+            if (exerciseUpdateArray.length > 0) {
+                CHANGED = true;
+                CURRENT_VERINE_DATABASE.updateExercise(exerciseUpdateArray);
+            }
+
         }
     }
 
