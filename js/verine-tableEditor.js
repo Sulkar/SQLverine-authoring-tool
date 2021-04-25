@@ -55,9 +55,10 @@ function createTableDataEdit(columns, values) {
         value.forEach((element, indexColumn) => {
             if (columns[indexColumn].type.split("|").includes("PRIMARY KEY")) {
                 SQL_ID_COLUMN = indexColumn;
-                newTable += "<th class='sqlID' id='id_" + indexColumn + "_" + indexRow + "'>" + element + "</th>";
+                
+                newTable += "<th class='sqlID' id='id_" + indexColumn + "_" + indexRow + "'>" + he.encode(String(element)) + "</th>";
             } else {
-                newTable += "<td style='' id='id_" + indexColumn + "_" + indexRow + "'>" + element + "</td>";
+                newTable += "<td style='' id='id_" + indexColumn + "_" + indexRow + "'>" +  he.encode(String(element)) + "</td>";
             }
 
         });
@@ -88,8 +89,8 @@ function checkForUpdates() {
             if (element[0] == sqlIdOfRow) {
                 //check every data of current row
                 for (var i = 0; i < maxColumns; i++) {
-                    if (he.encode($("#id_" + i + "_" + tempRow).text()) != element[i]) {
-                        var rowCellValue = he.encode($("#id_" + i + "_" + tempRow).text());
+                    if ($("#id_" + i + "_" + tempRow).text() != he.encode(String(element[i]))) { // he.decode
+                        var rowCellValue = he.decode(String($("#id_" + i + "_" + tempRow).text().replaceAll('"',"'")));
                         element[i] = rowCellValue;
                         var columnName = TABLE_COLUMNS[i].name;
                         var rowIdValueArray = [sqlIdOfRow, columnName, rowCellValue];

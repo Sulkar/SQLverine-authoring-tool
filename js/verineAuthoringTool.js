@@ -394,11 +394,11 @@ $(document).ready(function () {
 
             let exerciseUpdateArray = [];
             if (currentExercise.titel != $("#txtTitle").val()) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "titel", $("#txtTitle").val()]);
-            if (currentExercise.beschreibung != he.encode(quillExerciseDescription.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "beschreibung", he.encode(quillExerciseDescription.root.innerHTML)]);
-            if (currentExercise.aufgabenstellung != he.encode(quillExerciseTask.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "aufgabenstellung", he.encode(quillExerciseTask.root.innerHTML)]);
-            if (currentExercise.informationen != he.encode(quillExcerciseMeta.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "informationen", he.encode(quillExcerciseMeta.root.innerHTML)]);
+            if (currentExercise.beschreibung != quillExerciseDescription.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "beschreibung", quillExerciseDescription.root.innerHTML]);
+            if (currentExercise.aufgabenstellung != quillExerciseTask.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "aufgabenstellung", quillExerciseTask.root.innerHTML]);
+            if (currentExercise.informationen != quillExcerciseMeta.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "informationen", quillExcerciseMeta.root.innerHTML]);
             if (currentExercise.antworten != $("#txtAnswers").val()) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "antworten", $("#txtAnswers").val()]);
-            if (currentExercise.feedback != he.encode(quillFeedback.root.innerHTML)) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "feedback", he.encode(quillFeedback.root.innerHTML)]);
+            if (currentExercise.feedback != quillFeedback.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "feedback", quillFeedback.root.innerHTML]);
             //gibt es Änderungen?
             if (exerciseUpdateArray.length > 0) {
                 CHANGED = true;
@@ -429,15 +429,15 @@ $(document).ready(function () {
     function fillEditViewWithExercise() {
         let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
         if (!$.isEmptyObject(currentExercise)) {
-            $("#nav-edit #txtTitle").val(he.decode(currentExercise.titel));
-            let deltaExerciseDescription = quillExerciseDescription.clipboard.convert(he.decode(currentExercise.beschreibung));
+            $("#nav-edit #txtTitle").val(currentExercise.titel);
+            let deltaExerciseDescription = quillExerciseDescription.clipboard.convert(currentExercise.beschreibung);
             quillExerciseDescription.setContents(deltaExerciseDescription, 'silent');
-            let deltaExerciseTask = quillExerciseTask.clipboard.convert(he.decode(currentExercise.aufgabenstellung));
+            let deltaExerciseTask = quillExerciseTask.clipboard.convert(currentExercise.aufgabenstellung);
             quillExerciseTask.setContents(deltaExerciseTask, 'silent');
-            let deltaExcerciseMeta = quillExcerciseMeta.clipboard.convert(he.decode(currentExercise.informationen));
+            let deltaExcerciseMeta = quillExcerciseMeta.clipboard.convert(currentExercise.informationen);
             quillExcerciseMeta.setContents(deltaExcerciseMeta, 'silent');
-            $("#nav-edit #txtAnswers").val(he.decode(currentExercise.antworten));
-            let deltaFeedback = quillFeedback.clipboard.convert(he.decode(currentExercise.feedback));
+            $("#nav-edit #txtAnswers").val(currentExercise.antworten);
+            let deltaFeedback = quillFeedback.clipboard.convert(currentExercise.feedback);
             quillFeedback.setContents(deltaFeedback, 'silent');
         }
 
@@ -446,10 +446,10 @@ $(document).ready(function () {
     function fillPreviewViewWithExercise() {
         let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
         if (!$.isEmptyObject(currentExercise)) {
-            $("#nav-preview #preview-title").html(he.decode(currentExercise.titel));
-            $("#nav-preview #preview-description").html(he.decode(currentExercise.beschreibung));
-            $("#nav-preview #preview-task").html(he.decode(currentExercise.aufgabenstellung));
-            $("#nav-preview #preview-meta").html(he.decode(currentExercise.informationen));
+            $("#nav-preview #preview-title").html(currentExercise.titel);
+            $("#nav-preview #preview-description").html(currentExercise.beschreibung);
+            $("#nav-preview #preview-task").html(currentExercise.aufgabenstellung);
+            $("#nav-preview #preview-meta").html(currentExercise.informationen);
             //zeigt Antworten der Übung geparst an:
             let exerciseAnswer = "";
             exerciseAnswer += "Anzahl Lösungszeilen: " + currentExercise.answerObject.rows + "<br>";
@@ -491,7 +491,7 @@ $(document).ready(function () {
         CURRENT_VERINE_DATABASE.getExerciseOrder().forEach(order => {
             CURRENT_VERINE_DATABASE.getExercises().forEach(exercise => {
                 if (order[1] == exercise[0]) {
-                    $("#selectExercises").append(new Option(he.decode(exercise[2]), exercise[0]));
+                    $("#selectExercises").append(new Option(exercise[2], exercise[0]));
                 }
             });
         });
