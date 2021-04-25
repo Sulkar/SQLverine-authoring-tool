@@ -429,7 +429,6 @@ $(document).ready(function () {
     function fillEditViewWithExercise() {
         let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
         if (!$.isEmptyObject(currentExercise)) {
-            console.log(currentExercise)
             $("#nav-edit #txtTitle").val(he.decode(currentExercise.titel));
             let deltaExerciseDescription = quillExerciseDescription.clipboard.convert(he.decode(currentExercise.beschreibung));
             quillExerciseDescription.setContents(deltaExerciseDescription, 'silent');
