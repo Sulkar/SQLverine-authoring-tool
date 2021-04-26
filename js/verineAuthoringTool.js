@@ -117,7 +117,66 @@ $(document).ready(function () {
         $("#universal-modal").modal('toggle');
     });
 
+    //Button: öffnet ein Modal für das Einfügen von CSV Daten in die aktuell gewählte Tabelle.    
+    $("#btnAddCsvData").click(function () {
+        $("#universal-modal-large").modal('toggle');
+        $("#universal-modal-large #modal-title-table").html(CURRENT_VERINE_DATABASE.activeTable);
+        let columnTable = "<thead><tr><th>Spalten:</th>";
+        CURRENT_VERINE_DATABASE.columns.forEach((column, index) => {
+            if(column.type.split("|").includes("PRIMARY KEY")) columnTable += "<td>" + column.name + " (auto)</td>"        
+            else columnTable += "<td>" + column.name + "</td>"
+        });
+        columnTable += "</tr></thead>";
+        $("#universal-modal-large #columnTable").html(columnTable);
 
+    });
+    $("#universal-modal-large").on('click', '#btnInserCSV', function () {
+        let csvDelimiter = $("#inputCsvDelimiter").val();
+        let csvData = $("#txtAreaCsvData").val();
+        let csvIgnoreColumns = $("#inputCsvIgnoreColumns").val();
+        CURRENT_VERINE_DATABASE.insertValues = buildCsvInsertQuery(csvData, csvDelimiter, csvIgnoreColumns);
+        //persist data
+        let errorLogArray = CURRENT_VERINE_DATABASE.persist();
+        if (errorLogArray.length > 0) {
+            $("#universal-modal-large #modal-error").html(errorLogArray);
+        } else {
+            $("#universal-modal-large #modal-error").html("");
+            CHANGED = true;
+            //update table view
+            CURRENT_VERINE_DATABASE.prepareTableData(null);
+            $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
+            //update Übungen > Editieren
+            fillExerciseSelect(CURRENT_EXERCISE_ID);
+            fillEditViewWithExercise();
+            fillPreviewViewWithExercise();
+            $("#universal-modal-large").modal('toggle');
+        }
+    });
+
+    //function: baut aus CSV Daten eines Textfeldes einen Insert Query
+    function buildCsvInsertQuery(csvData, csvDelimiter, csvIgnoreColumns) {
+        let csvIgnoreColumnsArray = csvIgnoreColumns.replaceAll(/\s/g, "").split(",");
+        let insertValues = [];
+        let csvDataArray = csvData.split("\n");
+        csvDataArray.forEach(csvLine => {
+            if (csvLine.replaceAll(/\s/g, "") != "") {
+                if (csvDelimiter != ",") {
+                    csvLine = csvLine.replaceAll(",", "."); //ersetzt alle , mit .
+                }
+                csvLine = csvLine.replaceAll(/["']/g, ""); //ersetzt alle "' mit nichts
+                csvLine = csvLine.replaceAll(/[|,;]$/g, ""); //ersetzt alle |,; am Ende der Zeile mit nichts
+                let csvLineValues = csvLine.split(csvDelimiter);
+                let tempInsertArray = [];
+                csvLineValues.forEach((value, index) => {
+                    if (!csvIgnoreColumnsArray.includes(String(index + 1))) {
+                        tempInsertArray.push(value);
+                    }
+                })
+                insertValues.push(tempInsertArray);
+            }
+        });
+        return insertValues;
+    }
 
     // Datenbankdatei wurde zum Upload ausgewählt
     $("#fileDbUpload").on('change', function () {
@@ -361,15 +420,15 @@ $(document).ready(function () {
     });
 
     $("#spanBtnCreate").on("click", function () {
-        let createCommand = 'CREATE TABLE meine_tabelle (\n "id" INTEGER PRIMARY KEY,\n "first_name" TEXT NOT NULL,\n "last_name" TEXT NOT NULL,\n "email" TEXT NOT NULL UNIQUE,\n "phone" TEXT NOT NULL UNIQUE\n );';
+        let createCommand = 'CREATE TABLE meine_tabelle (\n "id" INTEGER PRIMARY KEY,\n "vorname" TEXT,\n "nachname" TEXT,\n "phone" INTEGER\n );';
         $("#txtDirectSql").val(createCommand);
     });
     $("#spanBtnInsert").on("click", function () {
-        let insertCommand = 'INSERT INTO meine_tabelle (first_name, last_name, email, phone)\nVALUES\n ("Richard", "Müller", "mueller@example.com", "080 654321")';
+        let insertCommand = 'INSERT INTO meine_tabelle (vorname, nachname, phone)\nVALUES\n ("Richard", "Müller", 080654321)';
         $("#txtDirectSql").val(insertCommand);
     });
     $("#spanBtnUpdate").on("click", function () {
-        let updateCommand = 'UPDATE meine_tabelle\nSET first_name = "Benni",\n last_name = "Geuder"\nWHERE id = 1;';
+        let updateCommand = 'UPDATE meine_tabelle\nSET\n vorname = "Benni",\n nachname = "Geuder"\nWHERE id = 1;';
         $("#txtDirectSql").val(updateCommand);
     });
 
