@@ -125,6 +125,8 @@ class VerineDatabase {
             tableData.forEach(data => {
                 tableNamesArray.push(data[0]);
             });
+        }else{
+            this.activeTable = undefined;
         }
         return tableNamesArray;
     }
@@ -134,7 +136,8 @@ class VerineDatabase {
         if (databaseTables.includes("verine_exercises")) {
             return "verine_exercises";
         } else {
-            return undefined;
+            this.exerciseTable = undefined;
+            return this.exerciseTable;
         }
     }
 
@@ -274,8 +277,13 @@ class VerineDatabase {
     }
 
     getExercises() {
+        this.exerciseTable = this.getExerciseTable();
         if (this.exerciseTable != undefined) {
-            return this.database.exec("SELECT * FROM " + this.exerciseTable + ";")[0].values;
+            try{
+                return this.database.exec("SELECT * FROM " + this.exerciseTable + ";")[0].values;
+            }catch(err){
+                return[];
+            }
         } else {
             return [];
         }
@@ -384,6 +392,7 @@ class VerineDatabase {
         }
 
         let tableCreateStatement = this.getTableCreateStatement(tableName);
+        
         let tableData = this.database.exec("SELECT * FROM " + tableName);
         if (tableData[0] != undefined) {
             let columnObjects = [];
