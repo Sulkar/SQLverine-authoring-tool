@@ -155,6 +155,7 @@ $(document).ready(function () {
 
     //function: baut aus CSV Daten eines Textfeldes einen Insert Query
     function buildCsvInsertQuery(csvData, csvDelimiter, csvIgnoreColumns) {
+        let regexCsvDelimiter = new RegExp(csvDelimiter, "g");
         let csvIgnoreColumnsArray = csvIgnoreColumns.replaceAll(/\s/g, "").split(",");
         let insertValues = [];
         let csvDataArray = csvData.split("\n");
@@ -165,7 +166,7 @@ $(document).ready(function () {
                 }
                 csvLine = csvLine.replaceAll(/["']/g, ""); //ersetzt alle "' mit nichts
                 csvLine = csvLine.replaceAll(/[|,;]$/g, ""); //ersetzt alle |,; am Ende der Zeile mit nichts
-                let csvLineValues = csvLine.split(csvDelimiter);
+                let csvLineValues = csvLine.split(regexCsvDelimiter);
                 let tempInsertArray = [];
                 csvLineValues.forEach((value, index) => {
                     if (!csvIgnoreColumnsArray.includes(String(index + 1))) {
@@ -420,7 +421,11 @@ $(document).ready(function () {
     });
 
     $("#spanBtnCreate").on("click", function () {
-        let createCommand = 'CREATE TABLE meine_tabelle (\n "id" INTEGER PRIMARY KEY,\n "vorname" TEXT,\n "nachname" TEXT,\n "phone" INTEGER\n );';
+        let createCommand = 'CREATE TABLE meine_tabelle (\n "id" INTEGER PRIMARY KEY, "vorname" TEXT, "nachname" TEXT, "phone" INTEGER\n );';
+        $("#txtDirectSql").val(createCommand);
+    });
+    $("#spanBtnCreateFk").on("click", function () {
+        let createCommand = 'CREATE TABLE "spieler" (\n "id" INTEGER, "vorname" TEXT, "nachname" TEXT, verein_id INTEGER,\nFOREIGN KEY("verein_id") REFERENCES "verein"("id"),\nPRIMARY KEY("id" AUTOINCREMENT)\n);';
         $("#txtDirectSql").val(createCommand);
     });
     $("#spanBtnInsert").on("click", function () {
@@ -428,9 +433,14 @@ $(document).ready(function () {
         $("#txtDirectSql").val(insertCommand);
     });
     $("#spanBtnUpdate").on("click", function () {
-        let updateCommand = 'UPDATE meine_tabelle\nSET\n vorname = "Benni",\n nachname = "Geuder"\nWHERE id = 1;';
+        let updateCommand = 'UPDATE meine_tabelle\nSET\n vorname = "Benni", nachname = "Geuder"\nWHERE id = 1;';
         $("#txtDirectSql").val(updateCommand);
     });
+    $("#spanBtnDelete").on("click", function () {
+        let updateCommand = 'DELETE FROM meine_tabelle WHERE id = 1\noder\nDELETE FROM meine_tabelle WHERE id IN (1,2,3,4,5,6);';
+        $("#txtDirectSql").val(updateCommand);
+    });
+    
 
     ///////////////
     // FUNCTIONs //

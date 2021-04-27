@@ -360,9 +360,10 @@
                     aria-labelledby="nav-databaseStructure-tab">
                     <div class="bd-example">
                         <p>Hier können SQL Befehle direkt auf die ausgewählte Datenbank ausgeführt werden:</p>
-                        <span id="spanBtnCreate" class="spanBtn">Create Table</span>&nbsp;-&nbsp;<span
+                        <span id="spanBtnCreate" class="spanBtn">Create Table</span>&nbsp;-&nbsp;<span id="spanBtnCreateFk" class="spanBtn">Create Table (FK)</span>&nbsp;-&nbsp;<span
                             id="spanBtnInsert" class="spanBtn">Insert Data</span>&nbsp;-&nbsp;<span id="spanBtnUpdate"
-                            class="spanBtn">Update Data</span>
+                            class="spanBtn">Update Data</span>&nbsp;-&nbsp;<span id="spanBtnDelete"
+                            class="spanBtn">Delete Data</span>
                         <textarea id="txtDirectSql" rows="10" style="width: 100%;" placeholder=""></textarea>
                     </div>
 
@@ -419,9 +420,9 @@
                 </div>
                 <div class="modal-body">
 
-                    <p>CSV Trennzeichen: <input type='text' id='inputCsvDelimiter' style='width:40px;' value=','>
+                    <p>CSV Trennzeichen: <input type='text' id='inputCsvDelimiter' style='width:80px;' value=',' placeholder=", ; | \t">
                         CSV-Spalten ignorieren: <input type='text' id='inputCsvIgnoreColumns' style='width:80px;'
-                            placeholder='1,2,...'></p>
+                            placeholder='1, 2, ...'></p>
                     <hr>
                     <div style="overflow: auto;">
                         <table id="columnTable" class="table"></table>
