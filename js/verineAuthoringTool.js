@@ -123,7 +123,7 @@ $(document).ready(function () {
         $("#universal-modal-large #modal-title-table").html(CURRENT_VERINE_DATABASE.activeTable);
         let columnTable = "<thead><tr><th>Spalten:</th>";
         CURRENT_VERINE_DATABASE.columns.forEach((column, index) => {
-            if(column.type.split("|").includes("PRIMARY KEY")) columnTable += "<td>" + column.name + " (auto)</td>"        
+            if (column.type.split("|").includes("PRIMARY KEY")) columnTable += "<td>" + column.name + " (auto)</td>"
             else columnTable += "<td>" + column.name + "</td>"
         });
         columnTable += "</tr></thead>";
@@ -259,8 +259,10 @@ $(document).ready(function () {
         fillEditViewWithExercise();
         fillPreviewViewWithExercise();
         //update edit table view
-        CURRENT_VERINE_DATABASE.prepareTableData(null);
-        $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
+        if (CURRENT_VERINE_DATABASE.getTables().length > 0) {
+            CURRENT_VERINE_DATABASE.prepareTableData(null);
+            $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
+        }
     });
 
     ////////////////////////////////////
@@ -269,7 +271,6 @@ $(document).ready(function () {
     //Button: neue verince_exercise Tabelle erstellen
     $("#btnCreateVerineTable").click(function () {
         CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_exercises ("id" INTEGER PRIMARY KEY, "reihenfolge" INTEGER NOT NULL, "titel" TEXT NOT NULL, "beschreibung" TEXT NOT NULL, "aufgabenstellung" TEXT NOT NULL, "informationen" TEXT NOT NULL, "antworten" TEXT NOT NULL, "feedback" TEXT NOT NULL, "geloest" INTEGER NOT NULL);');
-
         let tempTables = CURRENT_VERINE_DATABASE.getTables();
         updateTableChooser(tempTables[0], tempTables);
         handleDatabaseExercises(tempTables);
@@ -412,6 +413,8 @@ $(document).ready(function () {
                 $("#divQueryResult").hide();
                 $("#txtQueryResult").show();
                 $("#txtQueryResult").val("SQL Befehl erfolgreich ausgeführt: \n" + sqlCode);
+                //check if verine_exercise table was deleted
+                handleDatabaseExercises(tempTables);
             }
         } else {
             $("#divQueryResult").hide();
@@ -421,26 +424,31 @@ $(document).ready(function () {
     });
 
     $("#spanBtnCreate").on("click", function () {
-        let createCommand = 'CREATE TABLE meine_tabelle (\n "id" INTEGER PRIMARY KEY, "vorname" TEXT, "nachname" TEXT, "phone" INTEGER\n );';
+        let createCommand = 'CREATE TABLE "spieler" (\n    "id" INTEGER, "vorname" TEXT, "nachname" TEXT, "verein_id" INTEGER,\n    PRIMARY KEY("id" AUTOINCREMENT),\n    --optional:\n    FOREIGN KEY("verein_id") REFERENCES verein("id")\n);';
         $("#txtDirectSql").val(createCommand);
+        $("#txtQueryResult").val("");
     });
-    $("#spanBtnCreateFk").on("click", function () {
-        let createCommand = 'CREATE TABLE "spieler" (\n "id" INTEGER, "vorname" TEXT, "nachname" TEXT, verein_id INTEGER,\nFOREIGN KEY("verein_id") REFERENCES "verein"("id"),\nPRIMARY KEY("id" AUTOINCREMENT)\n);';
+    $("#spanBtnDeleteTable").on("click", function () {
+        let createCommand = 'DROP TABLE "spieler"';
         $("#txtDirectSql").val(createCommand);
+        $("#txtQueryResult").val("");
     });
     $("#spanBtnInsert").on("click", function () {
-        let insertCommand = 'INSERT INTO meine_tabelle (vorname, nachname, phone)\nVALUES\n ("Richard", "Müller", 080654321)';
+        let insertCommand = 'INSERT INTO "spieler" ("vorname", "nachname", "verein_id")\nVALUES\n    ("Thomas", "Müller", 4)';
         $("#txtDirectSql").val(insertCommand);
+        $("#txtQueryResult").val("");
     });
     $("#spanBtnUpdate").on("click", function () {
-        let updateCommand = 'UPDATE meine_tabelle\nSET\n vorname = "Benni", nachname = "Geuder"\nWHERE id = 1;';
+        let updateCommand = 'UPDATE "spieler"\nSET\n    "vorname" = "Diego", "nachname" = "Maradona"\nWHERE "id" = 1;';
         $("#txtDirectSql").val(updateCommand);
+        $("#txtQueryResult").val("");
     });
     $("#spanBtnDelete").on("click", function () {
-        let updateCommand = 'DELETE FROM meine_tabelle WHERE id = 1\noder\nDELETE FROM meine_tabelle WHERE id IN (1,2,3,4,5,6);';
+        let updateCommand = 'DELETE FROM "spieler" WHERE "id" = 1\n\noder\n\nDELETE FROM "spieler" WHERE "id" IN (1,2,3,4,5,6);';
         $("#txtDirectSql").val(updateCommand);
+        $("#txtQueryResult").val("");
     });
-    
+
 
     ///////////////
     // FUNCTIONs //
@@ -617,9 +625,11 @@ $(document).ready(function () {
 
     //function: Befüllt die Tabs, Aufgabenauswahl... wenn verine exercises vorhanden sind.
     function handleDatabaseExercises(tempTables) {
+        
         if (tempTables.includes("verine_exercises")) {
             try {
                 if (CURRENT_VERINE_DATABASE.getExercises().length > 0) {
+                    
                     CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.getExercises()[0][0];
                 } else {
                     CURRENT_EXERCISE_ID = undefined;
@@ -671,14 +681,17 @@ $(document).ready(function () {
         tables.forEach(element => {
             $("#selTableChooser").append(new Option(element, element));
         });
-        if (selected != null) {
+        if (selected != null && tables.length > 0) {
             $("#selTableChooser").val(selected);
             try {
                 CURRENT_VERINE_DATABASE.prepareTableData(selected);
                 $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
             } catch (err) {
+                $(".verineTableEditable").html("");
                 console.log(err);
             }
+        } else {
+            $(".verineTableEditable").html("");
         }
     }
 
