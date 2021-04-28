@@ -117,6 +117,33 @@ $(document).ready(function () {
         $("#universal-modal").modal('toggle');
     });
 
+    //Button: öffnet ein Modal für den Export der Daten der aktuell gewählten Tabelle.
+    $("#btnExportCsvData").click(function () {
+        $("#universal-modal-large-export").modal('toggle');
+        $("#universal-modal-large-export #modal-title-table").html(CURRENT_VERINE_DATABASE.activeTable);
+        let columnTable = "<thead><tr><th>Spalten:</th>";
+        CURRENT_VERINE_DATABASE.columns.forEach((column, index) => {
+            if (column.type.split("|").includes("PRIMARY KEY")) columnTable += "<td>" + column.name + " (auto)</td>"
+            else columnTable += "<td>" + column.name + "</td>"
+        });
+        columnTable += "</tr></thead>";
+        $("#universal-modal-large-export #columnTable").html(columnTable);
+
+        let csvDelimiter = $("#universal-modal-large-export #inputCsvDelimiterExport").val();
+        let csvIgnoreColumns = $("#universal-modal-large-export #inputCsvIgnoreColumnsExport").val();
+        if (CURRENT_VERINE_DATABASE.values.length > 0) {
+            $("#universal-modal-large-export #txtAreaCsvDataExport").val(createCsvForExport(csvDelimiter, csvIgnoreColumns));
+        }
+    });
+    $("#universal-modal-large-export").on('click', '#btnAktualisieren', function () {
+        let csvDelimiter = $("#universal-modal-large-export #inputCsvDelimiterExport").val();
+        let csvIgnoreColumns = $("#universal-modal-large-export #inputCsvIgnoreColumnsExport").val();
+        if (CURRENT_VERINE_DATABASE.values.length > 0) {
+            $("#universal-modal-large-export #txtAreaCsvDataExport").val(createCsvForExport(csvDelimiter, csvIgnoreColumns));
+        }
+
+    });
+
     //Button: öffnet ein Modal für das Einfügen von CSV Daten in die aktuell gewählte Tabelle.    
     $("#btnAddCsvData").click(function () {
         $("#universal-modal-large").modal('toggle');
@@ -131,14 +158,15 @@ $(document).ready(function () {
 
     });
     $("#universal-modal-large").on('click', '#btnInserCSV', function () {
-        let csvDelimiter = $("#inputCsvDelimiter").val();
-        let csvData = $("#txtAreaCsvData").val();
-        let csvIgnoreColumns = $("#inputCsvIgnoreColumns").val();
-        CURRENT_VERINE_DATABASE.insertValues = buildCsvInsertQuery(csvData, csvDelimiter, csvIgnoreColumns);
+        let csvDelimiter = $("#universal-modal-large #inputCsvDelimiter").val();
+        let csvData = $("#universal-modal-large #txtAreaCsvData").val();
+        let csvIgnoreColumns = $("#universal-modal-large #inputCsvIgnoreColumns").val();
+        CURRENT_VERINE_DATABASE.insertValues = buildCsvInsertQuery(csvData, csvDelimiter, csvIgnoreColumns);    
         //persist data
-        let errorLogArray = CURRENT_VERINE_DATABASE.persist();
-        if (errorLogArray.length > 0) {
-            $("#universal-modal-large #modal-error").html(errorLogArray);
+        let chkCsvImportIgnore = $('#chkCsvImportIgnore').is(":checked");
+        let errorLogArray = CURRENT_VERINE_DATABASE.runSqlCode(CURRENT_VERINE_DATABASE.createInsertQuery(!chkCsvImportIgnore));
+        if (errorLogArray.error != undefined) {
+            $("#universal-modal-large #modal-error").html(errorLogArray.error);
         } else {
             $("#universal-modal-large #modal-error").html("");
             CHANGED = true;
@@ -152,32 +180,6 @@ $(document).ready(function () {
             $("#universal-modal-large").modal('toggle');
         }
     });
-
-    //function: baut aus CSV Daten eines Textfeldes einen Insert Query
-    function buildCsvInsertQuery(csvData, csvDelimiter, csvIgnoreColumns) {
-        let regexCsvDelimiter = new RegExp(csvDelimiter, "g");
-        let csvIgnoreColumnsArray = csvIgnoreColumns.replaceAll(/\s/g, "").split(",");
-        let insertValues = [];
-        let csvDataArray = csvData.split("\n");
-        csvDataArray.forEach(csvLine => {
-            if (csvLine.replaceAll(/\s/g, "") != "") {
-                if (csvDelimiter != ",") {
-                    csvLine = csvLine.replaceAll(",", "."); //ersetzt alle , mit .
-                }
-                csvLine = csvLine.replaceAll(/["']/g, ""); //ersetzt alle "' mit nichts
-                csvLine = csvLine.replaceAll(/[|,;]$/g, ""); //ersetzt alle |,; am Ende der Zeile mit nichts
-                let csvLineValues = csvLine.split(regexCsvDelimiter);
-                let tempInsertArray = [];
-                csvLineValues.forEach((value, index) => {
-                    if (!csvIgnoreColumnsArray.includes(String(index + 1))) {
-                        tempInsertArray.push(value);
-                    }
-                })
-                insertValues.push(tempInsertArray);
-            }
-        });
-        return insertValues;
-    }
 
     // Datenbankdatei wurde zum Upload ausgewählt
     $("#fileDbUpload").on('change', function () {
@@ -464,6 +466,52 @@ $(document).ready(function () {
         return new sql.Database(new Uint8Array(bufferedDatabase));
     }
 
+    //function: Erstellt aus den Daten der Tabelle und einem Delimiter csv Daten für den Export
+    function createCsvForExport(csvDelimiter, csvIgnoreColumns) {
+        if (csvDelimiter == "\\t") csvDelimiter = "\t";
+        let csvExportData = "";
+        CURRENT_VERINE_DATABASE.values.forEach(valueRow => {
+            let csvExportLine = "";
+            valueRow.forEach((value, index) => {
+                if (!csvIgnoreColumns.split(",").includes(String(index + 1))) {
+                    if (csvExportLine == "") csvExportLine += value;
+                    else {
+                        csvExportLine += csvDelimiter + value;
+                    }
+                }
+            });
+            csvExportLine += "\n";
+            csvExportData += csvExportLine;
+        });
+        return csvExportData;
+    }
+
+    //function: baut aus CSV Daten eines Textfeldes einen Insert Query
+    function buildCsvInsertQuery(csvData, csvDelimiter, csvIgnoreColumns) {
+        let regexCsvDelimiter = new RegExp(csvDelimiter, "g");
+        let csvIgnoreColumnsArray = csvIgnoreColumns.replaceAll(/\s/g, "").split(",");
+        let insertValues = [];
+        let csvDataArray = csvData.split("\n");
+        csvDataArray.forEach(csvLine => {
+            if (csvLine.replaceAll(/\s/g, "") != "") {
+                if (csvDelimiter != ",") {
+                    csvLine = csvLine.replaceAll(",", "."); //ersetzt alle , mit .
+                }
+                csvLine = csvLine.replaceAll(/["']/g, ""); //ersetzt alle "' mit nichts
+                csvLine = csvLine.replaceAll(/[|,;]$/g, ""); //ersetzt alle |,; am Ende der Zeile mit nichts
+                let csvLineValues = csvLine.split(regexCsvDelimiter);
+                let tempInsertArray = [];
+                csvLineValues.forEach((value, index) => {
+                    if (!csvIgnoreColumnsArray.includes(String(index + 1))) {
+                        tempInsertArray.push(value);
+                    }
+                })
+                insertValues.push(tempInsertArray);
+            }
+        });
+        return insertValues;
+    }
+
     //function: aktualisiert eine Übung
     function updateExercise() {
         var currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
@@ -625,11 +673,11 @@ $(document).ready(function () {
 
     //function: Befüllt die Tabs, Aufgabenauswahl... wenn verine exercises vorhanden sind.
     function handleDatabaseExercises(tempTables) {
-        
+
         if (tempTables.includes("verine_exercises")) {
             try {
                 if (CURRENT_VERINE_DATABASE.getExercises().length > 0) {
-                    
+
                     CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.getExercises()[0][0];
                 } else {
                     CURRENT_EXERCISE_ID = undefined;

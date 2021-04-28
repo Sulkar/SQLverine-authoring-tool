@@ -353,6 +353,11 @@
                         data-toggle="tooltip" data-placement="top" title="Download Database">
                         CSV Daten importieren
                     </button>
+
+                    <button id="btnExportCsvData" class="btnExportCsvData btn btn-outline-success d-none d-md-inline-block"
+                    data-toggle="tooltip" data-placement="top" title="Download Database">
+                    Daten exportieren
+                </button>
                 </div>
 
                 <!-- Tab: Datenbank Struktur -->
@@ -407,14 +412,14 @@
             </div>
         </div>
     </div>
-    <!-- Modal large -->
+    <!-- Modal large CSV import -->
     <div class="modal fade" id="universal-modal-large" tabindex="-1" aria-labelledby="universal-modal-label"
         aria-hidden="true">
         <div class="modal-dialog modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="universal-modal-label">Daten im CSV Format in aktuelle Tabelle <span
-                            id="modal-title-table" style='color:red;'></span> einfügen</h5>
+                    <h5 class="modal-title" id="universal-modal-label">Daten im CSV Format in aktuelle Tabelle: <span
+                            id="modal-title-table" style='color:red;'></span> importieren.</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 
                 </div>
@@ -422,7 +427,12 @@
 
                     <p>CSV Trennzeichen: <input type='text' id='inputCsvDelimiter' style='width:80px;' value=',' placeholder=", ; | \t">
                         CSV-Spalten ignorieren: <input type='text' id='inputCsvIgnoreColumns' style='width:80px;'
-                            placeholder='1, 2, ...'></p>
+                            placeholder='1, 2, ...'> 
+                                <input class="form-check-input" type="checkbox" value="" id="chkCsvImportIgnore" checked>
+                                <label class="form-check-label" for="chkCsvImportIgnore">
+                                  Spalte id ignorieren
+                                </label>
+                            </p>
                     <hr>
                     <div style="overflow: auto;">
                         <table id="columnTable" class="table"></table>
@@ -435,6 +445,40 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">abbrechen</button>
                     <button type="button" id="btnInserCSV" class="btn btn-primary">Daten einfügen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal large CSV export -->
+    <div class="modal fade" id="universal-modal-large-export" tabindex="-1" aria-labelledby="universal-modal-label"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="universal-modal-label">Daten im CSV Format der aktuellen Tabelle: <span
+                            id="modal-title-table" style='color:red;'></span> exportieren.</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+                </div>
+                <div class="modal-body">
+
+                    <p>CSV Trennzeichen: <input type='text' id='inputCsvDelimiterExport' style='width:80px;' value=',' placeholder=", ; | \t">
+                        Spalten ignorieren: <input type='text' id='inputCsvIgnoreColumnsExport' style='width:80px;'
+                            placeholder='1, 2, ...'> <button id="btnAktualisieren" class="btn btn-outline-primary d-none d-md-inline-block"
+                            data-toggle="tooltip" data-placement="top" title="Download Database">
+                            aktualisieren
+                        </button></p>
+                    <hr>
+                    <div style="overflow: auto;">
+                        <table id="columnTable" class="table"></table>
+                    </div>
+                    <textarea rows='10' type='text' id='txtAreaCsvDataExport' class='form-control input-check' aria-label=''
+                        aria-describedby='' value='" + CURRENT_VERINE_DATABASE.name + "'></textarea>
+                    <div id="modal-error" style="color: red;"></div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">schließen</button>
                 </div>
             </div>
         </div>

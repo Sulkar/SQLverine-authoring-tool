@@ -352,12 +352,12 @@ class VerineDatabase {
         else return undefined;
     }
 
-    createInsertQuery() {
+    createInsertQuery(insertPrimaryKey = false) {
         let insertQuery = "";
         //INSERT INTO pokemon(name, nr, größe, gewicht) VALUES("Pikachu", 3, 34, 4)
         let tableNamesString = "";
         this.columns.forEach(column => {
-            if (!column.type.split("|").includes("PRIMARY KEY")) {
+            if (insertPrimaryKey || !column.type.split("|").includes("PRIMARY KEY")) {
                 if (tableNamesString == "") tableNamesString += column.name;
                 else tableNamesString += ", " + column.name;
             }
