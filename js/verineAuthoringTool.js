@@ -227,8 +227,8 @@ $(document).ready(function () {
     $(".btnDbNew").click(function () {
 
         if (NEW_DATABASE_COUNTER <= MAX_DATABASE_COUNTER) {
-            init(fetch("data/newDB_" + NEW_DATABASE_COUNTER + ".db").then(res => res.arrayBuffer())).then(function (initObject) {
-                CURRENT_VERINE_DATABASE = new VerineDatabase("neue Datenbank_" + NEW_DATABASE_COUNTER + ".db", initObject, "local");
+            init(fetch("data/newDB" + NEW_DATABASE_COUNTER + ".db").then(res => res.arrayBuffer())).then(function (initObject) {
+                CURRENT_VERINE_DATABASE = new VerineDatabase("neue_Datenbank_" + NEW_DATABASE_COUNTER + ".db", initObject, "local");
                 NEW_DATABASE_COUNTER++;
                 DATABASE_ARRAY.push(CURRENT_VERINE_DATABASE);
                 CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
