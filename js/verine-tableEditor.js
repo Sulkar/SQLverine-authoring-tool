@@ -5,28 +5,9 @@
 //global variables
 var MAX_ROWS = 0;
 var SQL_ID_COLUMN;
-
-var columnObject1 = {
-    name: "id",
-    type: "integer|PRIMARY KEY"
-}
-var columnObject2 = {
-    name: "vorname",
-    type: "text"
-}
-var columnObject3 = {
-    name: "nachname",
-    type: "text"
-}
-
-var TABLE_COLUMNS = [
-    columnObject1, columnObject2, columnObject3
-];
-var TABLE_VALUES = [
-    [1, "Mark", "Otto"],
-    [2, "Jacob", "Thornton"],
-    [3, "Larry", "Bird"]
-];
+ 
+var TABLE_COLUMNS;
+var TABLE_VALUES;
 
 var UPDATE_VALUES = []; //[sql_id, Spalte, Wert]
 var INSERT_VALUES = []; //[auto, Spalte1, Spalte2, ...]
@@ -144,10 +125,10 @@ function getSqlIdofRow(tempId) {
     return $("#id_" + SQL_ID_COLUMN + "_" + tempRow).text();
 }
 function getColumnFromId(tempId) {
-    return tempId.match(/(?<=id_)(\d+?)(?=_\d+)/g)[0];
+    return tempId.match(/(id_)(\d+)_(\d+)/)[2];
 }
 function getRowFromId(tempId) {
-    return tempId.match(/(?<=id_\d+?_)(.+)/g)[0];
+    return tempId.match(/(id_)(\d+)_(\d+)/)[3];
 }
 
 
