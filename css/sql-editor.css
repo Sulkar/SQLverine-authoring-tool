@@ -449,7 +449,7 @@ div.tab-pane.active {
 
 .excerciseViewport {
     overflow-y: scroll;
-    height: 75vh;
+    max-height: 60vh;
     width: 100%;
 }
 
