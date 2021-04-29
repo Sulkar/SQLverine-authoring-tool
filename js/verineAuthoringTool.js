@@ -35,70 +35,56 @@ $(document).ready(function () {
     }, function (error) { console.log(error) });
 
 
-    ////////////
-    // Quill //
-    var myToolbar = [
-        [{ header: [1, 2, 3, 4, false] }],
-        ['bold', 'italic', 'underline', 'strike'],
-        [{ 'color': [] }, { 'background': [] }],
-        ['clean'],
-        ['image', 'code-block'] //add image here
-    ];
+    ///////////////////////
+    // Summernote Editor //
 
-    function imageHandler() {
-        var range = this.quill.getSelection();
-        var value = prompt('Bild-URL hier einfügen:');
-        if (value) {
-            this.quill.insertEmbed(range.index, 'image', value, Quill.sources.USER);
-        }
-    }
-
-    var quillExerciseDescription = new Quill('#nav-edit #txtExerciseDescription', {
-        theme: 'snow',
-        modules: {
-            toolbar: {
-                container: myToolbar,
-                handlers: {
-                    image: imageHandler
-                }
-            }
-        },
+    $('#txtExerciseDescription').summernote({
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['codeview']]
+        ]
     });
-
-    var quillExerciseTask = new Quill('#nav-edit #txtExerciseTask', {
-        theme: 'snow',
-        modules: {
-            toolbar: {
-                container: myToolbar,
-                handlers: {
-                    image: imageHandler
-                }
-            }
-        },
+    $('#txtExerciseTask').summernote({
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['codeview']]
+        ]
     });
-
-    var quillExcerciseMeta = new Quill('#nav-edit #txtExcerciseMeta', {
-        theme: 'snow',
-        modules: {
-            toolbar: {
-                container: myToolbar,
-                handlers: {
-                    image: imageHandler
-                }
-            }
-        },
+    $('#txtExcerciseMeta').summernote({
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['codeview']]
+        ]
     });
-
-    var quillFeedback = new Quill('#nav-edit #txtFeedback', {
-        theme: 'snow',
-        modules: {
-            toolbar: {
-                container: myToolbar,
-                handlers: {
-                    image: imageHandler
-                }
-            }
-        },
+    $('#txtFeedback').summernote({
+        toolbar: [
+            ['style', ['style']],
+            ['font', ['bold', 'underline', 'clear']],
+            ['fontname', ['fontname']],
+            ['color', ['color']],
+            ['para', ['ul', 'ol', 'paragraph']],
+            ['table', ['table']],
+            ['insert', ['link', 'picture', 'video']],
+            ['view', ['codeview']]
+        ]
     });
 
     ////////////
@@ -161,7 +147,7 @@ $(document).ready(function () {
         let csvDelimiter = $("#universal-modal-large #inputCsvDelimiter").val();
         let csvData = $("#universal-modal-large #txtAreaCsvData").val();
         let csvIgnoreColumns = $("#universal-modal-large #inputCsvIgnoreColumns").val();
-        CURRENT_VERINE_DATABASE.insertValues = buildCsvInsertQuery(csvData, csvDelimiter, csvIgnoreColumns);    
+        CURRENT_VERINE_DATABASE.insertValues = buildCsvInsertQuery(csvData, csvDelimiter, csvIgnoreColumns);
         //persist data
         let chkCsvImportIgnore = $('#chkCsvImportIgnore').is(":checked");
         let errorLogArray = CURRENT_VERINE_DATABASE.runSqlCode(CURRENT_VERINE_DATABASE.createInsertQuery(!chkCsvImportIgnore));
@@ -519,11 +505,11 @@ $(document).ready(function () {
 
             let exerciseUpdateArray = [];
             if (currentExercise.titel != $("#txtTitle").val()) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "titel", $("#txtTitle").val()]);
-            if (currentExercise.beschreibung != quillExerciseDescription.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "beschreibung", quillExerciseDescription.root.innerHTML]);
-            if (currentExercise.aufgabenstellung != quillExerciseTask.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "aufgabenstellung", quillExerciseTask.root.innerHTML]);
-            if (currentExercise.informationen != quillExcerciseMeta.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "informationen", quillExcerciseMeta.root.innerHTML]);
+            if (currentExercise.beschreibung != $('#txtExerciseDescription').summernote('code')) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "beschreibung", $('#txtExerciseDescription').summernote('code')]);
+            if (currentExercise.aufgabenstellung != $('#txtExerciseTask').summernote('code')) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "aufgabenstellung", $('#txtExerciseTask').summernote('code')]);
+            if (currentExercise.informationen != $('#txtExcerciseMeta').summernote('code')) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "informationen", $('#txtExcerciseMeta').summernote('code')]);
             if (currentExercise.antworten != $("#txtAnswers").val()) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "antworten", $("#txtAnswers").val()]);
-            if (currentExercise.feedback != quillFeedback.root.innerHTML) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "feedback", quillFeedback.root.innerHTML]);
+            if (currentExercise.feedback != $('#txtFeedback').summernote('code')) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "feedback", $('#txtFeedback').summernote('code')]);
             //gibt es Änderungen?
             if (exerciseUpdateArray.length > 0) {
                 CHANGED = true;
@@ -555,15 +541,11 @@ $(document).ready(function () {
         let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
         if (!$.isEmptyObject(currentExercise)) {
             $("#nav-edit #txtTitle").val(currentExercise.titel);
-            let deltaExerciseDescription = quillExerciseDescription.clipboard.convert(currentExercise.beschreibung);
-            quillExerciseDescription.setContents(deltaExerciseDescription, 'silent');
-            let deltaExerciseTask = quillExerciseTask.clipboard.convert(currentExercise.aufgabenstellung);
-            quillExerciseTask.setContents(deltaExerciseTask, 'silent');
-            let deltaExcerciseMeta = quillExcerciseMeta.clipboard.convert(currentExercise.informationen);
-            quillExcerciseMeta.setContents(deltaExcerciseMeta, 'silent');
+            $('#txtExerciseDescription').summernote('code', currentExercise.beschreibung);
+            $('#txtExerciseTask').summernote('code', currentExercise.aufgabenstellung);
+            $('#txtExcerciseMeta').summernote('code', currentExercise.informationen);
+            $('#txtFeedback').summernote('code', currentExercise.feedback);
             $("#nav-edit #txtAnswers").val(currentExercise.antworten);
-            let deltaFeedback = quillFeedback.clipboard.convert(currentExercise.feedback);
-            quillFeedback.setContents(deltaFeedback, 'silent');
         }
 
     }
@@ -574,7 +556,14 @@ $(document).ready(function () {
             $("#nav-preview #preview-title").html(currentExercise.titel);
             $("#nav-preview #preview-description").html(currentExercise.beschreibung);
             $("#nav-preview #preview-task").html(currentExercise.aufgabenstellung);
-            $("#nav-preview #preview-meta").html(currentExercise.informationen);
+
+            //Informationen werden ausgeblendet, wenn kein Inhalt vorhanden ist
+            if (removeEmptyTags(currentExercise.informationen) != "") {
+                $("#card-preview-meta").show();
+                $("#preview-meta").html(currentExercise.informationen);
+            }
+            else $("#card-preview-meta").hide();
+
             //zeigt Antworten der Übung geparst an:
             let exerciseAnswer = "";
             exerciseAnswer += "Anzahl Lösungszeilen: " + currentExercise.answerObject.rows + "<br>";
@@ -587,6 +576,10 @@ $(document).ready(function () {
             });
             $("#nav-preview #preview-antworten").html(exerciseAnswer);
         }
+    }
+
+    function removeEmptyTags(stringToTest) {
+        return stringToTest.replaceAll(/[<p>|<br>|</p>|\s]/g, "");
     }
 
     //function: Erstellt eine Tabelle mit den Resultaten einer SQL Abfrage

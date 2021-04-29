@@ -1,3 +1,8 @@
+/* removes BS5 dropdown arrow */
+.dropdown-toggle::after {
+    display: none;
+}
+
 body {
     padding: 10px 20px;
 }
@@ -345,20 +350,7 @@ div.col.centerMenu {
     border: 1px solid lightgrey;
 }
 
-code {
-    font-family: monospace;
-}
 
-pre {
-    font-family: monospace;
-    background-color: #fff;
-    margin: 0.4em auto;
-    padding: 0.5em;
-    border-radius: 0.25em;
-    line-height: 0;
-    counter-reset: line;
-    white-space: pre-line;
-}
 
 pre span.codeline .active span span {
     background-color: lightblue;
@@ -449,7 +441,8 @@ div.tab-pane.active {
 
 .excerciseViewport {
     overflow-y: scroll;
-    height: 75vh;
+    overflow-x: hidden;
+    height: 70vh;
     width: 100%;
 }
 
