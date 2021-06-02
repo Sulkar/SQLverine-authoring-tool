@@ -273,6 +273,7 @@ export class VerineDatabase {
         let addExerciseQuery = 'INSERT INTO ' + this.exerciseTable + ' (titel, reihenfolge, beschreibung, aufgabenstellung, informationen, antworten, feedback, geloest) VALUES (' + exerciseValues + ');';
         try {
             this.database.exec(addExerciseQuery);
+            this.exerciseArray = this.getExercises();
         } catch (err) {
             errorLogArray.push(err);
             console.log(err);
@@ -297,6 +298,7 @@ export class VerineDatabase {
         });
         try {
             this.database.exec(updateQuery);
+            this.exerciseArray = this.getExercises();
             return true;
         } catch (err) {
             console.log(err);
@@ -311,6 +313,7 @@ export class VerineDatabase {
         let deleteExerciseQuery = 'DELETE FROM ' + this.exerciseTable + ' WHERE id = ' + exerciseId + ';';
         try {
             this.database.exec(deleteExerciseQuery);
+            this.exerciseArray = this.getExercises();
         } catch (err) {
             errorLogArray.push(err);
             console.log(err);
