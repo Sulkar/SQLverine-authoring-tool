@@ -578,3 +578,13 @@ element.style {}
     max-width: 640px;
     max-height: 480px;
 }
+.verineTableEditable{
+    table-layout: fixed;
+}
+.verineTableEditable th:first-child{
+    width: 100px;
+}
+.verineRowDelete{
+    color: red;
+    cursor: pointer;
+}
