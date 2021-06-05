@@ -43,11 +43,27 @@ window.onbeforeunload = function () {
     }
 }
 
+//setup SqlVerineEditor
+sqlVerineEditor.setEditorContainer("sqlVerineEditor");
+//sqlVerineEditor.setSchemaContainer("schemaArea");
+sqlVerineEditor.setOutputContainer("outputArea");
+sqlVerineEditor.activateExercises(false);
+sqlVerineEditor.showCodeButton(false);
+sqlVerineEditor.addRunFunction(() => {
+    let tempTables = CURRENT_VERINE_DATABASE.getTableNames();
+    updateTableChooser(tempTables[0], tempTables);
+});
+sqlVerineEditor.init();
+
 // START: erste Datenbank wird geladen
 init(fetch("data/Grundschule.db").then(res => res.arrayBuffer())).then(function (initObject) {
     CURRENT_VERINE_DATABASE = new VerineDatabase("Grundschule.db", initObject, "server");
     DATABASE_ARRAY.push(CURRENT_VERINE_DATABASE);
     CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
+
+    //reinit SqlVerineEditor          
+    sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
+    sqlVerineEditor.reinit();
 
     updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
     let tempTables = CURRENT_VERINE_DATABASE.getTableNames();
@@ -209,6 +225,10 @@ $("#fileDbUpload").on('change', function () {
             DATABASE_ARRAY.push(verineDatabase);
             CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
 
+            //reinit SqlVerineEditor          
+            sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
+            sqlVerineEditor.reinit();
+
             updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
             let tempTables = verineDatabase.getTableNames();
             updateTableChooser(tempTables[0], tempTables);
@@ -248,6 +268,10 @@ $(".btnDbNew").click(function () {
             NEW_DATABASE_COUNTER++;
             DATABASE_ARRAY.push(CURRENT_VERINE_DATABASE);
             CURRENT_DATABASE_INDEX = DATABASE_ARRAY.length - 1;
+
+            //reinit SqlVerineEditor          
+            sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
+            sqlVerineEditor.reinit();
 
             updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
             let tempTables = CURRENT_VERINE_DATABASE.getTableNames();
@@ -439,6 +463,7 @@ $("#btnDirectSql").on("click", function () {
     }
 });
 
+/*
 $("#spanBtnCreate").on("click", function () {
     let createCommand = 'CREATE TABLE "spieler" (\n    "id" INTEGER, "vorname" TEXT, "nachname" TEXT, "verein_id" INTEGER,\n    PRIMARY KEY("id" AUTOINCREMENT),\n    --optional:\n    FOREIGN KEY("verein_id") REFERENCES verein("id")\n);';
     $("#txtDirectSql").val(createCommand);
@@ -463,7 +488,7 @@ $("#spanBtnDelete").on("click", function () {
     let updateCommand = 'DELETE FROM "spieler" WHERE "id" = 1\n\noder\n\nDELETE FROM "spieler" WHERE "id" IN (1,2,3,4,5,6);';
     $("#txtDirectSql").val(updateCommand);
     $("#txtQueryResult").val("");
-});
+});*/
 
 
 ///////////////
