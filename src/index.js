@@ -1,9 +1,7 @@
 import $ from "jquery";
 import he from "he";
-import "bootstrap/dist/js/bootstrap.min";
+import { Tab, Modal } from "bootstrap";
 import 'bootstrap/dist/css/bootstrap.min.css';
-import Modal from "bootstrap/js/dist/modal";
-import Tab from "bootstrap/js/dist/tab";
 
 import "summernote/dist/summernote-lite";
 import "summernote/dist/summernote-lite.css";
@@ -606,23 +604,24 @@ function fillEditViewWithExercise() {
 function fillPreviewViewWithExercise() {
     let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
     if (!$.isEmptyObject(currentExercise)) {
-        $("#nav-preview #preview-title").html(currentExercise.titel);
-        $("#nav-preview #preview-description").html(currentExercise.beschreibung);
-        $("#nav-preview #preview-task").html(currentExercise.aufgabenstellung);
+        $("#nav-preview .exercise-title").html(currentExercise.titel);
+        $("#nav-preview .exercise-description").html(currentExercise.beschreibung);
+        $("#nav-preview .exercise-task").html(currentExercise.aufgabenstellung);
+        $("#nav-preview #exercise-feedback").html(currentExercise.feedback);
 
         //Informationen werden ausgeblendet, wenn kein Inhalt vorhanden ist
         if (removeEmptyTags(currentExercise.informationen) != "") {
-            $("#card-preview-meta").show();
-            $("#preview-meta").html(currentExercise.informationen);
+           
+            $("#exercise-meta").html(currentExercise.informationen);
         }
-        else $("#card-preview-meta").hide();
+        //else
 
         //zeigt Antworten der Übung geparst an:
         let exerciseAnswer = "";
         exerciseAnswer += "Anzahl Lösungszeilen: " + currentExercise.answerObject.rows + "<br>";
         if (currentExercise.answerObject.input) exerciseAnswer += "Inputfeld <br>";
         currentExercise.answerObject.exerciseSolutionArray.forEach(solution => {
-            exerciseAnswer += "<hr>";
+            exerciseAnswer += "<br>";
             exerciseAnswer += "Antwort: " + solution.loesungString + "<br>";;
             if (solution.table != undefined) exerciseAnswer += "Tabelle: " + solution.table + "<br>";;
             if (solution.column != undefined) exerciseAnswer += "Spalte: " + solution.column + "<br>";;
