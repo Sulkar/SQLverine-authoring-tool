@@ -1,5 +1,5 @@
 # SQLverine-authoring-tool
-<img src="images/sqlVerineAuthoringTool.png" width="400px" />
+<img src="src/images/sqlVerineAuthoringTool.png" width="400px" />
 
 SQLverine authoring tool ist ein Autorentool mit dem man Aufgaben für [SQLverine](https://github.com/Sulkar/SQLverine) erstellen kann.
 
