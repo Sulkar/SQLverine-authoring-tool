@@ -51,6 +51,7 @@ sqlVerineEditor.addRunFunction(() => {
     let tempTables = CURRENT_VERINE_DATABASE.getTableNames();
     updateTableChooser(tempTables[0], tempTables);
 });
+sqlVerineEditor.showExerciseTable();
 sqlVerineEditor.init();
 
 // START: erste Datenbank wird geladen
@@ -309,6 +310,9 @@ $("#nav-tab button").click(function () {
 //Button: neue verince_exercise Tabelle erstellen
 $("#btnCreateVerineTable").click(function () {
     CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_exercises ("id" INTEGER PRIMARY KEY, "reihenfolge" INTEGER NOT NULL, "titel" TEXT NOT NULL, "beschreibung" TEXT NOT NULL, "aufgabenstellung" TEXT NOT NULL, "informationen" TEXT NOT NULL, "antworten" TEXT NOT NULL, "feedback" TEXT NOT NULL, "geloest" INTEGER NOT NULL);');
+    //reinit SqlVerineEditor          
+    sqlVerineEditor.reinit();
+
     let tempTables = CURRENT_VERINE_DATABASE.getTableNames();
     updateTableChooser(tempTables[0], tempTables);
     handleDatabaseExercises(tempTables);
@@ -749,6 +753,10 @@ $('#selDbChooser').on('change', function () {
     // 1) Datenbank exisitiert und wurde bereits eingelesen
     if (CURRENT_DATABASE_INDEX != null && DATABASE_ARRAY[CURRENT_DATABASE_INDEX] != null) {
         CURRENT_VERINE_DATABASE = DATABASE_ARRAY[CURRENT_DATABASE_INDEX];
+
+        //reinit SqlVerineEditor          
+        sqlVerineEditor.setVerineDatabase(CURRENT_VERINE_DATABASE);
+        sqlVerineEditor.reinit();
 
         let tempTables = CURRENT_VERINE_DATABASE.getTableNames();
         updateTableChooser(tempTables[0], tempTables);

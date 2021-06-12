@@ -24,6 +24,7 @@ export default (function () {
     var SOLUTION_ROW_COUNTER = 0;
     var ACTIVATE_EXERCISES = false;
     var SHOW_CODE_BTN = true;
+    var SHOW_EXERCISE_TABLE = false;
 
     //Initialisierung des SqlVerineEditors
     sqlVerineEditor.init = () => {
@@ -49,6 +50,7 @@ export default (function () {
         CURRENT_SELECTED_SQL_ELEMENT = "START";
         USED_TABLES = [];
         //
+        $(EDITOR_CONTAINER).find('.codeArea.editor pre code').html("");
         updateActiveCodeView();
         if (URLCODE != undefined) {
             fillCodeAreaWithCode();
@@ -91,6 +93,12 @@ export default (function () {
     }
     sqlVerineEditor.showCodeButton = (showCodeButton) => {
         SHOW_CODE_BTN = showCodeButton;
+    }
+    sqlVerineEditor.showExerciseTable = (showCodeButton) => {
+        SHOW_EXERCISE_TABLE = true;
+    }
+    sqlVerineEditor.hideExerciseTable = (showCodeButton) => {
+        SHOW_EXERCISE_TABLE = false;
     }
 
     function loadActiveCodeViewData() {
@@ -923,7 +931,7 @@ export default (function () {
         clearSelectionOptions(".buttonArea .selTable");
         let databaseTables = getSqlTables();
         for (let i = 0; i < databaseTables.length; i++) {
-            if (databaseTables[i] != "verine_exercises") {
+            if (databaseTables[i] != "verine_exercises" || SHOW_EXERCISE_TABLE) {
                 $(EDITOR_CONTAINER).find(".buttonArea .selTable").append(new Option(databaseTables[i], databaseTables[i]));
             }
         }
