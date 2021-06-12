@@ -125,7 +125,7 @@ $('#txtFeedback').summernote({
 });
 
 // Modals
-var modalUniversal = new Modal(document.getElementById('universal-modal'));
+var modalUniversal = new Modal(document.getElementById('universal-modal-normal'));
 var modalUniversalLargeExport = new Modal(document.getElementById('universal-modal-large-export'));
 var modalUniversalLarge = new Modal(document.getElementById('universal-modal-large'));
 
@@ -135,11 +135,11 @@ var modalUniversalLarge = new Modal(document.getElementById('universal-modal-lar
 //Button: öffnet ein Modal für das Umbenennen der aktuellen Datenbank.    
 $("#btnDbRename").click(function () {
     modalUniversal.show();
-    $("#universal-modal .modal-title").html("Datenbank umbenennen");
-    $("#universal-modal .modal-body").html("<input type='text' id='inputRenameDatabase' class='form-control input-check' aria-label='' aria-describedby='' value='" + CURRENT_VERINE_DATABASE.name + "'>");
-    $("#universal-modal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">abbrechen</button><button type="button" id="btnRenameAccept" class="btn btn-primary">Änderung speichern</button>');
+   $("#universal-modal-normal .modal-title").html("Datenbank umbenennen");
+   $("#universal-modal-normal .modal-body").html("<input type='text' id='inputRenameDatabase' class='form-control input-check' aria-label='' aria-describedby='' value='" + CURRENT_VERINE_DATABASE.name + "'>");
+   $("#universal-modal-normal .modal-footer").html('<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">abbrechen</button><button type="button" id="btnRenameAccept" class="btn btn-primary">Änderung speichern</button>');
 });
-$("#universal-modal").on('click', '#btnRenameAccept', function () {
+$("#universal-modal-normal").on('click', '#btnRenameAccept', function () {
     CURRENT_VERINE_DATABASE.name = $("#inputRenameDatabase").val();
     updateDbChooser(DATABASE_ARRAY[CURRENT_DATABASE_INDEX].name);
     modalUniversal.hide();
