@@ -47,7 +47,7 @@ sqlVerineEditor.setEditorContainer("sqlVerineEditor");
 sqlVerineEditor.setOutputContainer("outputArea");
 sqlVerineEditor.activateExercises(false);
 sqlVerineEditor.showCodeButton(false);
-sqlVerineEditor.addRunFunction(() => {
+sqlVerineEditor.addRunFunctionDesktop(() => {
     let tempTables = CURRENT_VERINE_DATABASE.getTableNames();
     updateTableChooser(tempTables[0], tempTables);
 });
