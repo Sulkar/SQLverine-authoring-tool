@@ -193,7 +193,9 @@
             
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
-                    <button class="nav-link active" id="nav-edit-tab" data-bs-toggle="tab" data-bs-target="#nav-edit"
+                    <button class="nav-link active" id="nav-info-tab" data-bs-toggle="tab" data-bs-target="#nav-info"
+                        type="button" role="tab" aria-controls="nav-info" aria-selected="true">Info</button>
+                    <button class="nav-link " id="nav-edit-tab" data-bs-toggle="tab" data-bs-target="#nav-edit"
                         type="button" role="tab" aria-controls="nav-edit" aria-selected="true">Editieren</button>
                     <button class="nav-link" id="nav-preview-tab" data-bs-toggle="tab" data-bs-target="#nav-preview"
                         type="button" role="tab" aria-controls="nav-preview" aria-selected="false">Vorschau</button>
@@ -207,8 +209,81 @@
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
+
+ <!-- Tab: Info -->
+ <div class="tab-pane fade show active" id="nav-info" role="tabpanel" aria-labelledby="nav-info-tab">
+    <div class="yes-info">
+        <div class="infoViewport">
+            <div class="row edt-row">
+                <label for="txtTitle" class="col-sm-2 col-form-label">Name(n) des/der Autor(en):</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="txtAutor" placeholder="Autor(en)">
+                </div>
+            </div>
+            <div class="row edt-row">
+
+                <label for="txtInfo"
+                    class="col-sm-2 col-form-label">Information zu den Übungen:</label>
+
+                <div class="col-sm-10">
+                    <div id="txtInfo"
+                        placeholder="Information zu den Übungen">
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="row edt-row">
+
+                <label for="txtLizenz" class="col-sm-2 col-form-label">Lizenzinformationen:</label>
+
+                <div class="col-sm-10">
+                    <div id="txtLizenz" placeholder="...">
+                    </div>
+                </div>
+
+            </div>
+
+            
+
+            <div class="row edt-row">
+                <label for="txtAutorUrl" class="col-sm-2 col-form-label">Autoren URL:</label>
+                <div class="col-sm-10">
+                    <input type="text" class="form-control" id="txtAutorUrl"
+                        placeholder="https://sqlverine.org">
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <button id="btnSaveInfo"
+                    class="btnSave btn btn-outline-success d-none d-md-inline-block"
+                    data-toggle="tooltip" data-placement="top" title="Speichern">
+                    speichern
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="no-exercise text-center" style="display: none;">
+        <h3 id="no-exercise-info"></h3>
+        <div class="row">
+            <div class="col text-center">
+                <button id="btnCreateVerineTable"
+                    class="btnCreateVerineTable btn btn-outline-success d-none d-md-inline-block"
+                    data-toggle="tooltip" data-placement="top" title="Download Database">
+                    Übungstabelle anlegen
+                </button>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
                 <!-- Tab: Editieren -->
-                <div class="tab-pane fade show active" id="nav-edit" role="tabpanel" aria-labelledby="nav-edit-tab">
+                <div class="tab-pane fade show " id="nav-edit" role="tabpanel" aria-labelledby="nav-edit-tab">
                     <div class="yes-exercise">
                         <div class="excerciseViewport">
                             <div class="row edt-row">

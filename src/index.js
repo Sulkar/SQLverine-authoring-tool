@@ -112,6 +112,30 @@ $('#txtExcerciseMeta').summernote({
         ['view', ['codeview']]
     ]
 });
+$('#txtInfo').summernote({
+    toolbar: [
+        ['style', ['style']],
+        ['font', ['bold', 'underline', 'clear']],
+        ['fontname', ['fontname']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['table', ['table']],
+        ['insert', ['link', 'picture', 'video']],
+        ['view', ['codeview']]
+    ]
+});
+$('#txtLizenz').summernote({
+    toolbar: [
+        ['style', ['style']],
+        ['font', ['bold', 'underline', 'clear']],
+        ['fontname', ['fontname']],
+        ['color', ['color']],
+        ['para', ['ul', 'ol', 'paragraph']],
+        ['table', ['table']],
+        ['insert', ['link', 'picture', 'video']],
+        ['view', ['codeview']]
+    ]
+});
 $('#txtFeedback').summernote({
     toolbar: [
         ['style', ['style']],
