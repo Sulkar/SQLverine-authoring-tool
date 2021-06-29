@@ -1,5 +1,7 @@
 import $ from "jquery";
-import { Modal } from "bootstrap";
+import {
+    Modal
+} from "bootstrap";
 import "./css/SqlVerineEditor.css"
 
 export default (function () {
@@ -124,14 +126,22 @@ export default (function () {
 
     function setupCodeArea() {
         let codeArea = '<div class="codeAreaWrapper">';
+        //text to code switch
+        codeArea += '<div id="sqlVerineSwitchForm" class="form-check form-switch d-none d-lg-inline-block"><input class="form-check-input" type="checkbox" id="sqlVerineSwitch"><label class="form-check-label" for="sqlVerineSwitch">Aa</label></div>';
+
+        //button create url
         if (SHOW_CODE_BTN) {
-            codeArea += '<button id="btnCreateUrl" class="btnCreateUrl d-none d-md-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">'
+            codeArea += '<button id="btnCreateUrl" class="btnCreateUrl d-none d-lg-inline-block" data-toggle="tooltip" data-placement="top" title="Download Database">'
             codeArea += '<svg xmlns="http://www.w3.org/2000/svg" width="1.6em" height="1.6em" fill="currentColor" class="bi bi-link-45deg" viewBox="0 0 16 16">';
             codeArea += '<path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1.002 1.002 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4.018 4.018 0 0 1-.128-1.287z" />';
             codeArea += '<path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243L6.586 4.672z" />';
             codeArea += '</svg>';
             codeArea += '</button>';
         }
+
+        codeArea += '<div id="codeAreaText"><textarea class="form-control" rows="3"></textarea></div>';
+
+        //code area
         codeArea += '<div class="codeArea editor">';
         codeArea += '<pre><code></code></pre>';
         codeArea += '</div>';
@@ -216,6 +226,23 @@ export default (function () {
     //////////
     //EVENTS//
     function initEvents() {
+
+        //Switch codeAreaText -> Codearea
+        $(EDITOR_CONTAINER).find('#sqlVerineSwitchForm').on('change', '#sqlVerineSwitch', function (event) {
+            $(EDITOR_CONTAINER).find("#codeAreaText").toggle();
+            $(EDITOR_CONTAINER).find(".codeArea").toggle();
+        });
+
+        //codeAreaText: strg + enter führt sql Code aus
+        $(EDITOR_CONTAINER).find("#codeAreaText").on('keydown', 'textarea', function (event) {
+            if (event.ctrlKey && event.keyCode === 13) {
+                execSqlCommand(null, "desktop");
+                RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
+                    runFunction();
+                });
+            }
+        });
+
         //span click
         $(EDITOR_CONTAINER).on('click', '.codeArea.editor span', function (event) {
 
@@ -411,7 +438,7 @@ export default (function () {
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('scroll', function () {
             let maxWidth = $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth;
             let dotCount = Math.ceil($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).scrollWidth / $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).clientWidth);
-            let scrollIndex = Math.ceil(($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").scrollLeft() + ($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).clientWidth / 2)) / ((maxWidth / dotCount)))-1;
+            let scrollIndex = Math.ceil(($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").scrollLeft() + ($(EDITOR_CONTAINER).find(".buttonArea.codeComponents").get(0).clientWidth / 2)) / ((maxWidth / dotCount))) - 1;
             $(EDITOR_CONTAINER).find(".codeComponentsScrolldots a").removeClass("activeDot");
             $(EDITOR_CONTAINER).find(".codeComponentsScrolldots a").eq(scrollIndex).addClass("activeDot");
         });
@@ -476,11 +503,13 @@ export default (function () {
         NR++;
         return tempLeerzeichen;
     }
+
     function addLeerzeichenMitKomma() {
         let tempLeerzeichen = "<span class='codeElement_" + NR + " leerzeichen' data-goto-element='parent'>, </span>";
         NR++;
         return tempLeerzeichen;
     }
+
     function addKomma() {
         let tempKomma = "<span class='codeElement_" + NR + " komma' data-goto-element='parent'>,</span>";
         NR++;
@@ -504,9 +533,18 @@ export default (function () {
         //bereitet den sql Befehl vor
         let re = new RegExp(String.fromCharCode(160), "g"); // entfernt &nbsp;
         if (tempSqlCommand == null) {
-            tempSqlCommand = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").clone();
-            tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
-            tempSqlCommand = tempSqlCommand.text().replaceAll(re, " ").trim();
+
+            //Nutze Code aus der Codeare oder aus der Textare, je nachdem welches Element gerade sichtbar ist
+            if ($(EDITOR_CONTAINER).find(".codeArea").css('display') != 'none') {
+                tempSqlCommand = $(EDITOR_CONTAINER).find(".codeArea.editor pre code").clone();
+                tempSqlCommand.find(".codeline").prepend("<span>&nbsp;</span>");
+                tempSqlCommand = tempSqlCommand.text().replaceAll(re, " ").trim();
+            } else {
+                tempSqlCommand = $(EDITOR_CONTAINER).find("#codeAreaText textarea");
+                tempSqlCommand = tempSqlCommand.val().replaceAll(re, " ").trim();
+                updateUsedTables();
+            }
+
         }
         //versucht den sql Befehl auszuführen und gibt im Debugbereich das Ergebnis oder die Fehlermeldung aus
         try {
@@ -1023,11 +1061,26 @@ export default (function () {
     //function: get all used db tables in code area
     function updateUsedTables() {
         USED_TABLES = [];
-        $(EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function () {
-            if (!USED_TABLES.includes($(this).html())) {
-                USED_TABLES.push($(this).html());
-            }
-        });
+
+        if ($(EDITOR_CONTAINER).find(".codeArea").css('display') != 'none') {
+            //check used tables -> codeArea
+            $(EDITOR_CONTAINER).find(".codeArea.editor .selTable").each(function () {
+                if (!USED_TABLES.includes($(this).html())) {
+                    USED_TABLES.push($(this).html());
+                }
+            });
+        } else {
+            //check used tables -> codeAreaText
+            let databaseTables = getSqlTables();
+            let codeAreaTextValue = $(EDITOR_CONTAINER).find("#codeAreaText textarea").val();
+            databaseTables.forEach(table => {
+                if (codeAreaTextValue.includes(table.toString())) {
+                    if (!USED_TABLES.includes(table.toString())) {
+                        USED_TABLES.push(table.toString());
+                    }
+                }
+            });
+        }
     }
 
 
@@ -1148,7 +1201,7 @@ export default (function () {
                 $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnCreateForeignKey synSQL sqlDelete"> FOREIGN KEY ___ REFERENCES ___ (___)</button>');
                 break;
             default:
-            //log("no component found")
+                //log("no component found")
         }
     }
 
