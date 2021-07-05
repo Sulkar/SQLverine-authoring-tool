@@ -1,4 +1,3 @@
-
 export class VerineDatabase {
 
     constructor(name, currentDatabase, type) {
@@ -208,6 +207,24 @@ export class VerineDatabase {
         return exerciseObject;
     }
 
+    getInfo() {
+        let verine_info;
+        try {
+            verine_info = this.database.exec("SELECT * FROM verine_info;")[0].values[0];
+        } catch (err) {
+            verine_info = [];
+        }
+
+        let infoObject = {};
+        infoObject.id = verine_info[0];
+        infoObject.autor_name = verine_info[1];
+        infoObject.autor_url = verine_info[2];
+        infoObject.lizenz = verine_info[3];
+        infoObject.informationen = verine_info[4];
+
+        return infoObject;
+    }
+
     setCurrentExerciseAsSolved() {
         this.exerciseArray.forEach(exercise => {
             if (exercise[0] == this.currentExcersiseId) {
@@ -299,6 +316,20 @@ export class VerineDatabase {
         try {
             this.database.exec(updateQuery);
             this.exerciseArray = this.getExercises();
+            return true;
+        } catch (err) {
+            console.log(err);
+        }
+    }
+
+    updateInfo(infoUpdateArray) {
+        let updateQuery = ""; // UPDATE students SET score1 = 5, score2 = 8 WHERE id = 1;
+        infoUpdateArray.forEach(updateValue => {
+            updateQuery += "UPDATE verine_info SET " + updateValue[0] + " = '" + updateValue[1] + "' WHERE id = 1;";
+        });
+
+        try {
+            this.database.exec(updateQuery);
             return true;
         } catch (err) {
             console.log(err);
