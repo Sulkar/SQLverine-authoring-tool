@@ -350,7 +350,7 @@ $("#nav-tab button").click(function () {
 //Button: neue verince_exercise Tabelle erstellen
 $("#btnCreateVerineTable").on('click', function () {
     //create verine_exercise table
-    CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_exercises ("id" INTEGER PRIMARY KEY, "reihenfolge" INTEGER NOT NULL, "titel" TEXT NOT NULL, "beschreibung" TEXT NOT NULL, "aufgabenstellung" TEXT NOT NULL, "informationen" TEXT NOT NULL, "antworten" TEXT NOT NULL, "feedback" TEXT NOT NULL, "geloest" INTEGER NOT NULL);');
+    CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_exercises ("id" INTEGER, "reihenfolge" INTEGER NOT NULL, "titel" TEXT NOT NULL, "beschreibung" TEXT NOT NULL, "aufgabenstellung" TEXT NOT NULL, "informationen" TEXT NOT NULL, "antworten" TEXT NOT NULL, "feedback" TEXT NOT NULL, "geloest" INTEGER NOT NULL,	PRIMARY KEY("id" AUTOINCREMENT));');
     //create verine_info table
     CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_info ("id" INTEGER, "autor_name" TEXT, "autor_url" TEXT, "lizenz"	TEXT, "informationen" TEXT,	PRIMARY KEY("id" AUTOINCREMENT));');
     //create verine_info row
@@ -466,6 +466,7 @@ $("#btnSaveData").on("click", function () {
         fillExerciseSelect(CURRENT_EXERCISE_ID);
         fillEditViewWithExercise();
         fillPreviewViewWithExercise();
+        fillInfoViewWithInfo();
     }
 });
 
@@ -663,6 +664,8 @@ function createExercise() {
     CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.addExercise(newExercise, CURRENT_EXERCISE_ID);
 }
 
+
+
 //function: Befüllt die Textfelder im #nav-edit mit den Inhalten einer Übung
 function fillEditViewWithExercise() {
     let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
@@ -787,9 +790,12 @@ function displayNoVerineExercise() {
     $("#selectExercises").html("");
     $("#nav-edit .yes-exercise").hide();
     $("#nav-preview-tab").hide();
-    $("#nav-edit .no-exercise").show();
-    $("#nav-edit .no-exercise #no-exercise-info").html("Die aktuell gewählte Datenbank hat keine SQLverine Übungstabelle.");
-
+    $("#nav-edit-tab").hide();
+    $("#nav-info .yes-info").hide();
+    $("#nav-info .no-info").show();
+    $("#nav-info .no-info #no-info").html("Die aktuell gewählte Datenbank hat keine SQLverine Übungstabelle und keine SQLverine Infotabelle.");
+    let tab = new Tab(document.querySelector('#nav-info-tab'));
+    tab.show();
 }
 
 //function: Befüllt das Info Tab
@@ -806,19 +812,26 @@ function handleDatabaseInfo(tempTables) {
                 dbInfo = CURRENT_VERINE_DATABASE.getInfo();
             }
 
-            /*$("#nav-edit .yes-exercise").show();
-            $("#nav-preview-tab").show();
-            $("#nav-edit .no-exercise").hide();*/
-            $("#txtAuthor").val(dbInfo.autor_name);
-            $('#txtAuthorUrl').val(dbInfo.autor_url);
-            $('#txtLizenz').summernote('code', dbInfo.lizenz);
-            $('#txtInfo').summernote('code', dbInfo.informationen);
+            $("#nav-info .yes-info").show();
+            $("#nav-info .no-info").hide();
+
+            fillInfoViewWithInfo();
 
         } catch (err) {
             console.log(err);
         }
     } else {
         displayNoVerineExercise();
+    }
+}
+//function: Befüllt die Textfelder im #nav-edit mit den Inhalten einer Übung
+function fillInfoViewWithInfo() {
+    let dbInfo = CURRENT_VERINE_DATABASE.getInfo();
+    if (!$.isEmptyObject(dbInfo)) {
+        $("#txtAuthor").val(dbInfo.autor_name);
+        $('#txtAuthorUrl').val(dbInfo.autor_url);
+        $('#txtLizenz').summernote('code', dbInfo.lizenz);
+        $('#txtInfo').summernote('code', dbInfo.informationen);
     }
 }
 
@@ -834,6 +847,7 @@ function handleDatabaseExercises(tempTables) {
                 CURRENT_EXERCISE_ID = undefined;
                 createExercise();
             }
+            $("#nav-edit-tab").show();
             $("#nav-edit .yes-exercise").show();
             $("#nav-preview-tab").show();
             $("#nav-edit .no-exercise").hide();
