@@ -510,11 +510,14 @@ export class VerineDatabase {
         columnObject.type = "";
 
         //untersucht das Table Create Statement
+        console.log(tableCreateStatement)
+        tableCreateStatement = tableCreateStatement.replace(/CREATE TABLE [^\(]+\(/g, ""); //removes CREATE TABLE ... (
         let tableCreateStatementArray = tableCreateStatement.split(",");
+        console.log(tableCreateStatement)
         tableCreateStatementArray.forEach(createStatementLine => {
 
             //find types
-            let foundColumnName = createStatementLine.match(/\n(\s+|)"([\wöäüß]+)"/); // z.B.: "id" INTEGER NOT NULL UNIQUE,
+            let foundColumnName = createStatementLine.match(/(\s+|)["']([\wöäüß]+)["']/); // z.B.: "id" INTEGER NOT NULL UNIQUE,
             if (foundColumnName != null && foundColumnName[2] == columnName) {
                 typeArray.forEach(sqlType => {
                     var re = new RegExp("\\b" + sqlType + "\\b", "");
@@ -525,7 +528,7 @@ export class VerineDatabase {
                 });
             }
             //check for primary key, ...
-            let foundPrimaryKey = createStatementLine.match(/(PRIMARY KEY\(")(\w+)"/);
+            let foundPrimaryKey = createStatementLine.match(/(PRIMARY KEY\(["'])(\w+)["']/);
             if (foundPrimaryKey != null && foundPrimaryKey[2] == columnName) {
                 if (columnObject.type == "") columnObject.type += "PRIMARY KEY";
                 else columnObject.type += "|" + "PRIMARY KEY";

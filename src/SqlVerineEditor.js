@@ -575,7 +575,7 @@ export default (function () {
 
             //wurde drop, create, alter table ausgeführt?
             let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(.*?)/);
-            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s'(.*?)'/);
+            let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](.*?)['"]/);
             let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(.*?)/);
             let tablesChanged = false;
 

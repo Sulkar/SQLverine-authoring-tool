@@ -1038,6 +1038,7 @@ function getRowFromId(tempId) {
 
 //function: fügt am Ende der Tabelle eine neue Zeile hinzu
 function createNewRow() {
+    console.log(TABLE_COLUMNS)
     var newRow = "<tr id='row_" + (MAX_ROWS - 0) + "'>";
     TABLE_COLUMNS.forEach((element, indexColumn) => {
         if (element.type.split("|").includes("PRIMARY KEY")) {
