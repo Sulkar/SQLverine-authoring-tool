@@ -249,13 +249,13 @@ export default (function () {
             event.stopPropagation();
             let elementNr;
             //
-            if ($(this).data("goto-element") == "next") {
+            if ($(this).attr("data-goto-element") == "next") {
                 elementNr = "0";
             }
-            if ($(this).data("goto-element") == "parent") {
+            if ($(this).attr("data-goto-element") == "parent") {
                 elementNr = getElementNr($(this).parents().closest(".parent").last().attr("class"));
-            } else if ($(this).data("goto-element") != undefined) {
-                elementNr = $(this).data("goto-element");
+            } else if ($(this).attr("data-goto-element") != undefined) {
+                elementNr = $(this).attr("data-goto-element");
             } else {
                 elementNr = getElementNr($(this).attr("class"));
             }
@@ -270,7 +270,7 @@ export default (function () {
                 let returnObject = {};
                 // wich select is triggering?
                 // -> selColumn, selTable
-                if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") || $(tempSelectField).hasClass("selOperators") || $(tempSelectField).hasClass("selTyp") || $(tempSelectField).hasClass("selConstraint") || $(tempSelectField).hasClass("selColumnCreate")) {
+                if ($(tempSelectField).hasClass("selColumn") || $(tempSelectField).hasClass("selTable") /*|| $(tempSelectField).hasClass("selOperators")*/ || $(tempSelectField).hasClass("selTyp") || $(tempSelectField).hasClass("selConstraint") || $(tempSelectField).hasClass("selColumnCreate")) {
 
                     if (CURRENT_SELECTED_ELEMENT.hasClass("extended") && CURRENT_SELECTED_ELEMENT.hasClass("comma")) { //Feld erweitert ,___
                         returnObject = addSelectValue(tempSelectField);
@@ -293,6 +293,72 @@ export default (function () {
                         setSelection("next", false);
                     }
                 }
+
+                // -> selOperators
+                else if ($(tempSelectField).hasClass("selOperators")) {
+                    returnObject = addSelectValue(tempSelectField);
+                    CURRENT_SELECTED_ELEMENT.replaceWith(returnObject.tempSelectValue);
+                    CURRENT_SELECTED_ELEMENT = $(returnObject.thisCodeElement);
+
+                    // Remove all special expression modifiers
+                    let where3 = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                    where3.attr('data-sql-element', 'WHERE_3');
+
+                    //remove all EXP_IN
+                    CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_IN"]').each(function () {
+                        let prevElement = $(this).prev();
+                        //Komma entfernen, wenn vorhanden
+                        if (prevElement.text() == ", ") {
+                            prevElement.remove();
+                        }
+                        $(this).remove();
+                        NR--;
+                    });
+                    CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_IN_BRACKET"]').each(function () {
+                        $(this).remove();
+                        NR--;
+                    });
+
+                    //remove all EXP_BETWEEN
+                    CURRENT_SELECTED_ELEMENT.nextAll('[data-sql-element="EXP_BETWEEN"]').each(function () {                            
+                        $(this).remove();
+                        NR--;
+                    });
+
+                    // Operator IN ( ___, ___ ) 
+                    if (tempSelectField.value == "IN") {
+                        let expressionIN = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                        expressionIN.attr('data-sql-element', 'EXP_IN')
+
+                        //Klammern                                          
+                        CURRENT_SELECTED_ELEMENT.after("<span class='codeElement_" + NR + " btnLeftBracket synBrackets sqlIdentifier extended' data-sql-element='EXP_IN_BRACKET'> (</span>");
+                        NR++;
+                        expressionIN.after("<span class='codeElement_" + NR + " btnRightBracket synBrackets sqlIdentifier extended' data-sql-element='EXP_IN_BRACKET'> )</span>");
+                        NR++;
+                        setSelection("next", false);                        
+                    }
+                    // Operator BETWEEN ___ AND ___
+                    else if (tempSelectField.value == "BETWEEN") {
+                        let expressionBETWEEN = CURRENT_SELECTED_ELEMENT.nextAll('.inputField:first');
+                        expressionBETWEEN.attr('data-sql-element', 'EXP_BETWEEN');
+
+                        // AND ___
+                        let betweenStructure = "";
+                        betweenStructure += "<span class='codeElement_" + NR + "' data-goto-element='" + (NR - 7) + "' data-sql-element='EXP_BETWEEN'> AND </span>";
+                        NR++;
+                        betweenStructure += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-next-element='" + (NR - 4) + "' data-sql-element='EXP_BETWEEN'>___</span>";
+                        NR++;
+
+                        expressionBETWEEN.after(betweenStructure);
+                        setSelection("next", false);
+
+                    } 
+                    // 
+                    else {
+                        setSelection("next", false);
+                    }
+                }
+
                 // -> selAggregate
                 else if ($(tempSelectField).hasClass("selAggregate")) {
                     CURRENT_SELECTED_ELEMENT.replaceWith(addAggregat(tempSelectField));
@@ -330,7 +396,7 @@ export default (function () {
 
         //Button: Add Element "inputField"
         $(EDITOR_CONTAINER).on('click', '.btnAdd', function (event) {
-            let dataSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
+            let dataSqlElement = CURRENT_SELECTED_ELEMENT.attr("data-sql-element"); //.data
 
             if (CURRENT_SELECTED_ELEMENT.hasClass("inputField")) {
 
@@ -470,14 +536,14 @@ export default (function () {
         if (position == "first") {
             $(elements).each(function () {
                 tempElement = this;
-                if ($(tempElement).data("sql-element") == attributeValue) {
+                if ($(tempElement).attr("data-sql-element") == attributeValue) {
                     return false; //found element -> stop loop
                 }
             });
         } else if (position == "last") {
             $(elements.get().reverse()).each(function () {
                 tempElement = this;
-                if ($(tempElement).data("sql-element") == attributeValue) {
+                if ($(tempElement).attr("data-sql-element") == attributeValue) {
                     return false; //found element -> stop loop
                 }
             });
@@ -521,7 +587,7 @@ export default (function () {
         let sqlStringFound = false;
         let tempSqlDataArray = sqlDataIdentifier.replaceAll(" ", "").split(",");
         tempSqlDataArray.forEach(element => {
-            if (currentSelectedElement.data("sql-element").includes(element)) {
+            if (currentSelectedElement.attr("data-sql-element").includes(element)) {
                 sqlStringFound = true;
             }
         });
@@ -714,7 +780,7 @@ export default (function () {
         }
         // spezielle Behandlung des inputFields von INSERT_2
         else if (elementToDelete.hasClass("inputField") && elementToDelete.hasClass("extended") && hasCurrentSelectedElementSqlDataString(elementToDelete, "INSERT_2, UPDATE_2, UPDATE_3")) {
-            let elementGroup = elementToDelete.data("element-group");
+            let elementGroup = elementToDelete.attr("data-element-group");
             if (elementGroup != undefined) {
                 let idsToDelete = elementGroup.toString().split(",");
                 idsToDelete.forEach(element => {
@@ -730,7 +796,7 @@ export default (function () {
         }
         // root inputField remove old Element and create new one
         else if (elementToDelete.hasClass("inputField") && elementToDelete.hasClass("root")) {
-            let dataSqlElement = elementToDelete.data("sql-element");
+            let dataSqlElement = elementToDelete.attr("data-sql-element");
             elementToDelete.replaceWith(addInputField(dataSqlElement, "root"));
             setSelection(NEXT_ELEMENT_NR, false);
         }
@@ -777,7 +843,7 @@ export default (function () {
     //function: adds an Aggregat <span> with inputField
     function addAggregat(tempSelectField) {
         let classesFromCodeComponent = getClassesFromElementAsString(tempSelectField);
-        let tempSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
+        let tempSqlElement = CURRENT_SELECTED_ELEMENT.attr("data-sql-element");
         let tempAggregat = "";
         if (CURRENT_SELECTED_ELEMENT.hasClass("extended")) {
             tempAggregat += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " inputField sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>" + tempSelectField.value + "(";
@@ -789,7 +855,6 @@ export default (function () {
         tempAggregat += ")</span>";
         return tempAggregat;
     }
-
 
     //function: überprüft den eingegebenen Code und passt diesen ggf. an
     function cleanSQLCode() {
@@ -816,9 +881,9 @@ export default (function () {
         let classesFromCodeComponent = getClassesFromElementAsString(tempSelectField);
         let tempElementId = getElementNr(CURRENT_SELECTED_ELEMENT.attr("class"));
 
-        let tempSqlElement = CURRENT_SELECTED_ELEMENT.data("sql-element");
-        let tempNextElement = CURRENT_SELECTED_ELEMENT.data("next-element");
-        let tempGroupElement = CURRENT_SELECTED_ELEMENT.data("element-group");
+        let tempSqlElement = CURRENT_SELECTED_ELEMENT.attr("data-sql-element");
+        let tempNextElement = CURRENT_SELECTED_ELEMENT.attr("data-next-element");
+        let tempGroupElement = CURRENT_SELECTED_ELEMENT.attr("data-element-group");
 
         let tempSelectValue = "";
         if (CURRENT_SELECTED_ELEMENT.hasClass("extended")) {
@@ -913,7 +978,7 @@ export default (function () {
         if (element != undefined && element.length != 0) {
             element.addClass("active");
             CURRENT_SELECTED_ELEMENT = element;
-            CURRENT_SELECTED_SQL_ELEMENT = element.closest(".sqlIdentifier").data("sql-element");
+            CURRENT_SELECTED_SQL_ELEMENT = element.attr("data-sql-element");
         } else {
             CURRENT_SELECTED_SQL_ELEMENT = "START";
         }
@@ -946,7 +1011,6 @@ export default (function () {
                 let componentCounter = 0;
 
                 element.visibleCodeComponents.forEach(element => {
-
                     //.selColumns werden in Abhängigkeit der USED_TABLES erstellt
                     if (element.codeComponentClass == ".selColumn") {
                         updateUsedTables();
@@ -1291,12 +1355,12 @@ export default (function () {
         //Button: AND
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnAND', function () {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
-            let parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
+            let parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.attr("data-sql-element");
             let elementWhereAND = "";
             elementWhereAND += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='AND'>";
             NR++;
-            elementWhereAND += addLeerzeichen();
-            elementWhereAND += "AND";
+            //elementWhereAND += addLeerzeichen();
+            elementWhereAND += " AND";
             elementWhereAND += addLeerzeichen();
             elementWhereAND += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_AND_1' data-next-element='" + (NR + 2) + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
@@ -1316,12 +1380,12 @@ export default (function () {
         //Button: OR
         $(EDITOR_CONTAINER).find(".buttonArea.codeComponents").on('click', '.btnOR', function () {
             let classesFromCodeComponent = getClassesFromElementAsString(this);
-            let parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.data("sql-element");
+            let parentSqlIdentifier = CURRENT_SELECTED_ELEMENT.attr("data-sql-element");
             let elementWhereOR = "";
             elementWhereOR += "<span class='codeElement_" + NR + " " + classesFromCodeComponent + " parent sqlIdentifier inputFields' data-sql-element='OR'>";
             NR++;
-            elementWhereOR += addLeerzeichen();
-            elementWhereOR += "OR";
+            //elementWhereOR += addLeerzeichen();
+            elementWhereOR += " OR";
             elementWhereOR += addLeerzeichen();
             elementWhereOR += "<span class='codeElement_" + NR + " inputField unfilled root sqlIdentifier' data-sql-element='" + parentSqlIdentifier + "_OR_1' data-next-element='" + (NR + 2) + "'>___</span>";
             NEXT_ELEMENT_NR = NR;
