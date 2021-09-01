@@ -13,7 +13,9 @@ import initSqlJs from "sql.js";
 import {
     VerineDatabase
 } from "./VerineDatabase";
-import sqlVerineEditor from "./SqlVerineEditor";
+
+import { SqlVerineEditor } from "./SqlVerineEditor"
+
 import "./css/index.css";
 
 
@@ -47,7 +49,8 @@ window.onbeforeunload = function () {
 }
 
 //setup SqlVerineEditor
-sqlVerineEditor.setEditorContainer("sqlVerineEditor");
+var sqlVerineEditor = new SqlVerineEditor();
+sqlVerineEditor.setEditorContainer("sqlVerineEditor"); 
 //sqlVerineEditor.setSchemaContainer("schemaArea");
 sqlVerineEditor.setOutputContainer("outputArea");
 sqlVerineEditor.activateExercises(false);
