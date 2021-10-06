@@ -657,7 +657,7 @@ function createExercise() {
     if (CURRENT_EXERCISE_ID != undefined) {
         newExercise.reihenfolge = CURRENT_VERINE_DATABASE.getNewExerciseOrderAfterId(CURRENT_EXERCISE_ID);
     } else newExercise.reihenfolge = 1;
-    newExercise.titel = "neue Übung";
+    newExercise.titel = "neue Aufgabe";
     newExercise.beschreibung = "";
     newExercise.aufgabenstellung = "";
     newExercise.informationen = "";
@@ -796,7 +796,7 @@ function displayNoVerineExercise() {
     $("#nav-edit-tab").hide();
     $("#nav-info .yes-info").hide();
     $("#nav-info .no-info").show();
-    $("#nav-info .no-info #no-info").html("Die aktuell gewählte Datenbank hat keine SQLverine Übungstabelle und keine SQLverine Infotabelle.");
+    $("#nav-info .no-info #no-info").html("Die aktuell gewählte Datenbank hat keine SQLverine Aufgabentabelle und keine SQLverine Infotabelle.");
     let tab = new Tab(document.querySelector('#nav-info-tab'));
     tab.show();
 }
