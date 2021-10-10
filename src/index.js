@@ -505,7 +505,7 @@ $(".verineTableEditable").on("click", ".verineRowDelete", function (event) {
 
 //Button: Pagination
 $('#nav-tableEdit').on('click', '.btnPaginationRight', function (event) {
-    CURRENT_VERINE_DATABASE.currentPagination++;
+    CURRENT_VERINE_DATABASE.setCurrentPagination(CURRENT_VERINE_DATABASE.getCurrentPagination()+1);
     //persist data
     CURRENT_VERINE_DATABASE.updateValues = checkForUpdates();
     CURRENT_VERINE_DATABASE.insertValues = checkForInserts();
@@ -518,7 +518,7 @@ $('#nav-tableEdit').on('click', '.btnPaginationRight', function (event) {
     }
 });
 $('#nav-tableEdit').on('click', '.btnPaginationLeft', function (event) {
-    CURRENT_VERINE_DATABASE.currentPagination--;
+    CURRENT_VERINE_DATABASE.setCurrentPagination(CURRENT_VERINE_DATABASE.getCurrentPagination()-1);
     //persist data
     CURRENT_VERINE_DATABASE.updateValues = checkForUpdates();
     CURRENT_VERINE_DATABASE.insertValues = checkForInserts();
@@ -560,32 +560,6 @@ $("#btnDirectSql").on("click", function () {
     }
 });
 
-/*
-$("#spanBtnCreate").on("click", function () {
-    let createCommand = 'CREATE TABLE "spieler" (\n    "id" INTEGER, "vorname" TEXT, "nachname" TEXT, "verein_id" INTEGER,\n    PRIMARY KEY("id" AUTOINCREMENT),\n    --optional:\n    FOREIGN KEY("verein_id") REFERENCES verein("id")\n);';
-    $("#txtDirectSql").val(createCommand);
-    $("#txtQueryResult").val("");
-});
-$("#spanBtnDeleteTable").on("click", function () {
-    let createCommand = 'DROP TABLE "spieler"';
-    $("#txtDirectSql").val(createCommand);
-    $("#txtQueryResult").val("");
-});
-$("#spanBtnInsert").on("click", function () {
-    let insertCommand = 'INSERT INTO "spieler" ("vorname", "nachname", "verein_id")\nVALUES\n    ("Thomas", "Müller", 4)';
-    $("#txtDirectSql").val(insertCommand);
-    $("#txtQueryResult").val("");
-});
-$("#spanBtnUpdate").on("click", function () {
-    let updateCommand = 'UPDATE "spieler"\nSET\n    "vorname" = "Diego", "nachname" = "Maradona"\nWHERE "id" = 1;';
-    $("#txtDirectSql").val(updateCommand);
-    $("#txtQueryResult").val("");
-});
-$("#spanBtnDelete").on("click", function () {
-    let updateCommand = 'DELETE FROM "spieler" WHERE "id" = 1\n\noder\n\nDELETE FROM "spieler" WHERE "id" IN (1,2,3,4,5,6);';
-    $("#txtDirectSql").val(updateCommand);
-    $("#txtQueryResult").val("");
-});*/
 
 
 ///////////////
@@ -968,11 +942,11 @@ function createTableDataEdit(columns, values) {
     let paginationLeft = false;
 
     //wenn Testelement die maximale Anzahl der angezeigten Einträge übersteigt, wird es entfernt
-    if (values.length > CURRENT_VERINE_DATABASE.maxLimit) {
+    if (values.length > CURRENT_VERINE_DATABASE.getMaxLimit()) {
         values.pop();
         paginationRight = true;
     }
-    if (CURRENT_VERINE_DATABASE.currentPagination > 0) {
+    if (CURRENT_VERINE_DATABASE.getCurrentPagination() > 0) {
         paginationLeft = true;
     }
 

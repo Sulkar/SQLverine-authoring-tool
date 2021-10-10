@@ -30,7 +30,18 @@ export class VerineDatabase {
 
 
     }
-
+    getCurrentPagination(){
+        return this.currentPagination;
+    }
+    setCurrentPagination(currentPagination){
+        this.currentPagination = currentPagination;
+    }
+    getMaxLimit(){
+        return this.maxLimit;
+    }
+    setMaxLimit(maxLimit){
+        this.maxLimit = maxLimit;
+    }
     hasExercises() {
         if (this.exerciseArray.length > 0) return true;
         else return false;
@@ -319,12 +330,12 @@ export class VerineDatabase {
 
     setLastPaginationPage() {
         const rows = this.getRows();
-        const lastPaginationPage = Math.floor(rows / this.maxLimit);
-        const remainder = rows % this.maxLimit;
+        const lastPaginationPage = Math.floor(rows / this.getMaxLimit());
+        const remainder = rows % this.getMaxLimit();
         if(remainder == 0){
-            this.currentPagination = lastPaginationPage-1;
+            this.setCurrentPagination(lastPaginationPage-1);
         }else{
-            this.currentPagination = lastPaginationPage;
+            this.setCurrentPagination(lastPaginationPage);
         }
         
     }
@@ -583,7 +594,7 @@ export class VerineDatabase {
         }
 
         //erstellt einen LIMIT +1 mit OFFSET Befehl für Pagination (+1 ist wichtig, um zu sehen, ob noch mehr Einträge vorhanden sind)
-        const tempLimitAndOffset = " LIMIT " + (this.maxLimit + 1) + " OFFSET " + (this.currentPagination * this.maxLimit);
+        const tempLimitAndOffset = " LIMIT " + (this.getMaxLimit() + 1) + " OFFSET " + (this.getCurrentPagination() * this.getMaxLimit());
 
         let tableCreateStatement = this.getTableCreateStatement(tableName);
         let tableData = this.database.exec("SELECT * FROM " + tableName + tempLimitAndOffset);
