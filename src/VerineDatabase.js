@@ -10,6 +10,9 @@ export class VerineDatabase {
         this.columns = undefined;
         this.values = undefined;
 
+        this.maxLimit = 10;
+        this.currentPagination = 0;
+
         if (this.database != null) {
             this.exerciseTable = this.getExerciseTable();
             this.formTable = this.getFormTable();
@@ -225,9 +228,9 @@ export class VerineDatabase {
 
     addForm(newFormData) {
         const errorLogArray = [];
-        this.formTable = this.getFormTable();       
-        const addFormQuery = "INSERT INTO " + this.formTable + " (form_data) VALUES ('" + newFormData + "');"; 
-       
+        this.formTable = this.getFormTable();
+        const addFormQuery = "INSERT INTO " + this.formTable + " (form_data) VALUES ('" + newFormData + "');";
+
         try {
             this.database.exec(addFormQuery);
             this.formArray = this.getForms();
@@ -247,13 +250,26 @@ export class VerineDatabase {
         const errorLogArray = [];
         let updateQuery = "";
         updateQuery += "UPDATE " + this.formTable + " SET form_data = '" + updateFormData + "' WHERE id = " + id + ";";
-                       
+
         try {
             this.database.exec(updateQuery);
             this.formArray = this.getForms();
             return true;
         } catch (err) {
             return errorLogArray.push(err);
+        }
+    }
+
+    deleteFormById(formId) {
+        let errorLogArray = [];
+        let deleteExerciseQuery = 'DELETE FROM ' + this.formTable + ' WHERE id = ' + formId + ';';
+        try {
+            const result = this.database.exec(deleteExerciseQuery);
+            this.formArray = this.getForms();
+            return result;
+        } catch (err) {
+            errorLogArray.push(err);
+            return errorLogArray;
         }
     }
 
@@ -285,13 +301,32 @@ export class VerineDatabase {
         }
 
         let infoObject = {};
-        infoObject.id = verine_info[0];
-        infoObject.autor_name = verine_info[1];
-        infoObject.autor_url = verine_info[2];
-        infoObject.lizenz = verine_info[3];
-        infoObject.informationen = verine_info[4];
+        if (verine_info.length > 0) {            
+            infoObject.id = verine_info[0];
+            infoObject.autor_name = verine_info[1];
+            infoObject.autor_url = verine_info[2];
+            infoObject.lizenz = verine_info[3];
+            infoObject.informationen = verine_info[4];
+        }
 
         return infoObject;
+    }
+
+    getRows(tableName) {
+        if (tableName == undefined) tableName = this.activeTable;
+        return this.database.exec("SELECT COUNT(*) FROM " + tableName)[0].values[0][0];
+    }
+
+    setLastPaginationPage() {
+        const rows = this.getRows();
+        const lastPaginationPage = Math.floor(rows / this.maxLimit);
+        const remainder = rows % this.maxLimit;
+        if(remainder == 0){
+            this.currentPagination = lastPaginationPage-1;
+        }else{
+            this.currentPagination = lastPaginationPage;
+        }
+        
     }
 
     setCurrentExerciseAsSolved() {
@@ -524,7 +559,7 @@ export class VerineDatabase {
             let valuesString = "";
             valueArray.forEach((value, index) => {
                 if (value != "auto") {
-                    if (isNaN(value)) value = '"' + value + '"'; //wenn value keine Zahl ist, muss es mit " " umklammert werden
+                    if (isNaN(value) || value == "") value = '"' + value + '"'; //wenn value keine Zahl ist oder leer ist, muss es mit " " umklammert werden
                     if (valuesString == "") valuesString += '(' + value;
                     else valuesString += ', ' + value;
 
@@ -547,8 +582,11 @@ export class VerineDatabase {
             this.activeTable = tableName;
         }
 
+        //erstellt einen LIMIT +1 mit OFFSET Befehl für Pagination (+1 ist wichtig, um zu sehen, ob noch mehr Einträge vorhanden sind)
+        const tempLimitAndOffset = " LIMIT " + (this.maxLimit + 1) + " OFFSET " + (this.currentPagination * this.maxLimit);
+
         let tableCreateStatement = this.getTableCreateStatement(tableName);
-        let tableData = this.database.exec("SELECT * FROM " + tableName);
+        let tableData = this.database.exec("SELECT * FROM " + tableName + tempLimitAndOffset);
         if (tableData[0] != undefined) {
             let columnObjects = [];
             tableData[0].columns.forEach(column => {
@@ -579,10 +617,8 @@ export class VerineDatabase {
         columnObject.type = "";
 
         //untersucht das Table Create Statement
-        console.log(tableCreateStatement)
         tableCreateStatement = tableCreateStatement.replace(/CREATE TABLE [^\(]+\(/g, ""); //removes CREATE TABLE ... (
         let tableCreateStatementArray = tableCreateStatement.split(",");
-        console.log(tableCreateStatement)
         tableCreateStatementArray.forEach(createStatementLine => {
 
             //find types
@@ -617,7 +653,7 @@ export class VerineDatabase {
         let tableColorArray = [];
 
         tables.forEach(table => {
-            if (table != "verine_exercises" && table != "verine_info") {
+            if (table != "verine_exercises" && table != "verine_info" && table != "verine_forms") {
                 let tableColor = this.colorArray[tableCounter % this.colorArray.length];
 
                 if (tableCounter % 3 == 0) {

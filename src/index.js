@@ -14,7 +14,9 @@ import {
     VerineDatabase
 } from "./VerineDatabase";
 
-import { SqlVerineEditor } from "./SqlVerineEditor"
+import {
+    SqlVerineEditor
+} from "./SqlVerineEditor"
 
 import "./css/index.css";
 
@@ -50,7 +52,7 @@ window.onbeforeunload = function () {
 
 //setup SqlVerineEditor
 var sqlVerineEditor = new SqlVerineEditor();
-sqlVerineEditor.setEditorContainer("sqlVerineEditor"); 
+sqlVerineEditor.setEditorContainer("sqlVerineEditor");
 //sqlVerineEditor.setSchemaContainer("schemaArea");
 sqlVerineEditor.setOutputContainer("outputArea");
 sqlVerineEditor.activateExercises(false);
@@ -221,7 +223,7 @@ $("#btnAddCsvData").click(function () {
     $("#universal-modal-large #columnTable").html(columnTable);
 
 });
-$("#universal-modal-large").on('click', '#btnInserCSV', function () {
+$("#universal-modal-large").on('click', '#btnInsertCSV', function () {
     let csvDelimiter = $("#universal-modal-large #inputCsvDelimiter").val();
     let csvData = $("#universal-modal-large #txtAreaCsvData").val();
     let csvIgnoreColumns = $("#universal-modal-large #inputCsvIgnoreColumns").val();
@@ -235,6 +237,7 @@ $("#universal-modal-large").on('click', '#btnInserCSV', function () {
         $("#universal-modal-large #modal-error").html("");
         CHANGED = true;
         //update table view
+        CURRENT_VERINE_DATABASE.setLastPaginationPage();
         CURRENT_VERINE_DATABASE.prepareTableData(null);
         $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
         //update Übungen > Editieren
@@ -447,11 +450,17 @@ $('#selTableChooser').on('change', function () {
 
 //Button: fügt am Ende der Tabelle eine neue Zeile ein
 $("#btnAddRow").on("click", function () {
+    //Neue Zeile soll an letzer Pagination Seite hinzugefügt werden
+    CURRENT_VERINE_DATABASE.setLastPaginationPage();
+    CURRENT_VERINE_DATABASE.prepareTableData(null);
+    $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
+    //Neue Zeile wird appended
     $(".verineTableEditable tbody").append(createNewRow());
     var maxHeight = $(".verineTableEditableViewport").get(0).scrollHeight;
     $(".verineTableEditableViewport").scrollTop(maxHeight);
 
 });
+
 
 //Button: speichert die Daten
 $("#btnSaveData").on("click", function () {
@@ -463,6 +472,7 @@ $("#btnSaveData").on("click", function () {
     } else {
         CHANGED = true;
         //update table view
+        CURRENT_VERINE_DATABASE.setLastPaginationPage();
         CURRENT_VERINE_DATABASE.prepareTableData(null);
         $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
         //update Übungen > Editieren
@@ -488,9 +498,37 @@ $(".verineTableEditable").on("click", ".verineRowDelete", function (event) {
 });
 
 //Event: gibt die ID des angeklickten TD aus
-$(".verineTableEditable").on("input", "tbody td", function () {
+/*$(".verineTableEditable").on("input", "tbody td", function () {
     console.log($(this).attr("id"));
 
+});*/
+
+//Button: Pagination
+$('#nav-tableEdit').on('click', '.btnPaginationRight', function (event) {
+    CURRENT_VERINE_DATABASE.currentPagination++;
+    //persist data
+    CURRENT_VERINE_DATABASE.updateValues = checkForUpdates();
+    CURRENT_VERINE_DATABASE.insertValues = checkForInserts();
+    if (CURRENT_VERINE_DATABASE.persist().length > 0) {
+        console.log("error persist");
+    } else {
+        CHANGED = true;
+        CURRENT_VERINE_DATABASE.prepareTableData(null);
+        $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
+    }
+});
+$('#nav-tableEdit').on('click', '.btnPaginationLeft', function (event) {
+    CURRENT_VERINE_DATABASE.currentPagination--;
+    //persist data
+    CURRENT_VERINE_DATABASE.updateValues = checkForUpdates();
+    CURRENT_VERINE_DATABASE.insertValues = checkForInserts();
+    if (CURRENT_VERINE_DATABASE.persist().length > 0) {
+        console.log("error persist");
+    } else {
+        CHANGED = true;
+        CURRENT_VERINE_DATABASE.prepareTableData(null);
+        $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
+    }
 });
 
 //////////////////////////////////////
@@ -922,9 +960,23 @@ function updateTableChooser(selected, tables) {
 
 //function: erstellt eine Tabelle anhand von Spalten und Zeilen
 function createTableDataEdit(columns, values) {
+
     TABLE_COLUMNS = columns;
     TABLE_VALUES = values;
-    var newTable = ""; //"<table class='table table-hover verineTableEditable'>";
+
+    let paginationRight = false;
+    let paginationLeft = false;
+
+    //wenn Testelement die maximale Anzahl der angezeigten Einträge übersteigt, wird es entfernt
+    if (values.length > CURRENT_VERINE_DATABASE.maxLimit) {
+        values.pop();
+        paginationRight = true;
+    }
+    if (CURRENT_VERINE_DATABASE.currentPagination > 0) {
+        paginationLeft = true;
+    }
+
+    var newTable = "<table class='table table-hover verineTableEditable'>";
     newTable += "<thead>";
     columns.forEach((column) => {
         newTable += "<th scope='col'>" + column.name + "</th>";
@@ -953,7 +1005,16 @@ function createTableDataEdit(columns, values) {
         MAX_ROWS++;
     });
 
-    newTable += "</tbody>";
+    newTable += "</tbody></table>";
+
+    //Pagination Schaltflächen
+    if (paginationRight) {
+        newTable += "<button class='btnPaginationRight'>weiter</button>"
+    }
+    if (paginationLeft) {
+        newTable += "<button class='btnPaginationLeft'>zurück</button>"
+    }
+
     //newTable += "</table>";
     return newTable;
 
@@ -974,7 +1035,7 @@ function checkForUpdates() {
             if (element[0] == sqlIdOfRow) {
                 //check every data of current row
                 for (var i = 0; i < maxColumns; i++) {
-                    if ($("#id_" + i + "_" + tempRow).text() != he.encode(String(element[i]))) { // he.decode
+                    if ($("#id_" + i + "_" + tempRow).text() != he.encode(String(element[i]))) { 
                         var rowCellValue = he.decode(String($("#id_" + i + "_" + tempRow).text().replaceAll('"', "'")));
                         element[i] = rowCellValue;
                         var columnName = TABLE_COLUMNS[i].name;
@@ -1041,7 +1102,6 @@ function getRowFromId(tempId) {
 
 //function: fügt am Ende der Tabelle eine neue Zeile hinzu
 function createNewRow() {
-    console.log(TABLE_COLUMNS)
     var newRow = "<tr id='row_" + (MAX_ROWS - 0) + "'>";
     TABLE_COLUMNS.forEach((element, indexColumn) => {
         if (element.type.split("|").includes("PRIMARY KEY")) {
