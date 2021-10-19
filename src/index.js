@@ -506,7 +506,7 @@ $(".verineTableEditable").on("click", ".verineRowDelete", function (event) {
 
 //Button: Pagination
 $('#nav-tableEdit').on('click', '.btnPaginationRight', function (event) {
-    CURRENT_VERINE_DATABASE.setCurrentPagination(CURRENT_VERINE_DATABASE.getCurrentPagination()+1);
+    CURRENT_VERINE_DATABASE.setCurrentPagination(CURRENT_VERINE_DATABASE.getCurrentPagination() + 1);
     //persist data
     CURRENT_VERINE_DATABASE.updateValues = checkForUpdates();
     CURRENT_VERINE_DATABASE.insertValues = checkForInserts();
@@ -519,7 +519,7 @@ $('#nav-tableEdit').on('click', '.btnPaginationRight', function (event) {
     }
 });
 $('#nav-tableEdit').on('click', '.btnPaginationLeft', function (event) {
-    CURRENT_VERINE_DATABASE.setCurrentPagination(CURRENT_VERINE_DATABASE.getCurrentPagination()-1);
+    CURRENT_VERINE_DATABASE.setCurrentPagination(CURRENT_VERINE_DATABASE.getCurrentPagination() - 1);
     //persist data
     CURRENT_VERINE_DATABASE.updateValues = checkForUpdates();
     CURRENT_VERINE_DATABASE.insertValues = checkForInserts();
@@ -647,7 +647,7 @@ function updateExercise() {
 //function: aktualisiert die meta informationen
 function updateInfo() {
     var currentInfo = CURRENT_VERINE_DATABASE.getInfo();
-    
+
     if (!$.isEmptyObject(currentInfo)) {
 
         let infoUpdateArray = [];
@@ -655,9 +655,9 @@ function updateInfo() {
         if (currentInfo.autor_url != $('#txtAuthorUrl').val()) infoUpdateArray.push(["autor_url", $('#txtAuthorUrl').val()]);
         if (currentInfo.lizenz != $('#txtLizenz').summernote('code')) infoUpdateArray.push(["lizenz", $('#txtLizenz').summernote('code')]);
         if (currentInfo.informationen != $('#txtInfo').summernote('code')) infoUpdateArray.push(["informationen", $('#txtInfo').summernote('code')]);
-        if(document.getElementById('radioAufgabeFrei').checked){
+        if (document.getElementById('radioAufgabeFrei').checked) {
             infoUpdateArray.push(["freie_aufgabenwahl", 1]);
-        }else{
+        } else {
             infoUpdateArray.push(["freie_aufgabenwahl", 0]);
         }
 
@@ -690,44 +690,69 @@ function createExercise() {
 
 //function: Befüllt die Textfelder im #nav-edit mit den Inhalten einer Übung
 function fillEditViewWithExercise() {
-    let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
-    if (!$.isEmptyObject(currentExercise)) {
-        $("#nav-edit #txtTitle").val(currentExercise.titel);
-        $('#txtExerciseDescription').summernote('code', currentExercise.beschreibung);
-        $('#txtExerciseTask').summernote('code', currentExercise.aufgabenstellung);
-        $('#txtExcerciseMeta').summernote('code', currentExercise.informationen);
-        $('#txtFeedback').summernote('code', currentExercise.feedback);
-        $("#nav-edit #txtAnswers").val(currentExercise.antworten);
+    if (CURRENT_EXERCISE_ID != undefined) {
+        let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+        if (!$.isEmptyObject(currentExercise)) {
+            $("#nav-edit #txtTitle").val(currentExercise.titel);
+            $('#txtExerciseDescription').summernote('code', currentExercise.beschreibung);
+            $('#txtExerciseTask').summernote('code', currentExercise.aufgabenstellung);
+            $('#txtExcerciseMeta').summernote('code', currentExercise.informationen);
+            $('#txtFeedback').summernote('code', currentExercise.feedback);
+            $("#nav-edit #txtAnswers").val(currentExercise.antworten);
+        }
+    } else {
+        resetExerciseView();
     }
-
 }
+
+function resetExerciseView() {
+    $("#nav-edit #txtTitle").val("");
+    $('#txtExerciseDescription').summernote('code', "");
+    $('#txtExerciseTask').summernote('code', "");
+    $('#txtExcerciseMeta').summernote('code', "");
+    $('#txtFeedback').summernote('code', "");
+    $("#nav-edit #txtAnswers").val("");
+}
+
+function resetExercisePreviewView() {
+    $("#nav-preview .exercise-title").html("");
+    $("#nav-preview .exercise-description").html("");
+    $("#nav-preview .exercise-task").html("");
+    $("#nav-preview #exercise-feedback").html("");
+    $("#exercise-meta").html("");
+    $("#nav-preview #preview-antworten").html("");
+}
+
 //function: Befüllt die Textfelder im #nav-preview mit den Inhalten einer Übung
 function fillPreviewViewWithExercise() {
-    let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
-    if (!$.isEmptyObject(currentExercise)) {
-        $("#nav-preview .exercise-title").html(currentExercise.titel);
-        $("#nav-preview .exercise-description").html(currentExercise.beschreibung);
-        $("#nav-preview .exercise-task").html(currentExercise.aufgabenstellung);
-        $("#nav-preview #exercise-feedback").html(currentExercise.feedback);
+    if (CURRENT_EXERCISE_ID != undefined) {
+        let currentExercise = CURRENT_VERINE_DATABASE.getExerciseById(CURRENT_EXERCISE_ID);
+        if (!$.isEmptyObject(currentExercise)) {
+            $("#nav-preview .exercise-title").html(currentExercise.titel);
+            $("#nav-preview .exercise-description").html(currentExercise.beschreibung);
+            $("#nav-preview .exercise-task").html(currentExercise.aufgabenstellung);
+            $("#nav-preview #exercise-feedback").html(currentExercise.feedback);
 
-        //Informationen werden ausgeblendet, wenn kein Inhalt vorhanden ist
-        if (removeEmptyTags(currentExercise.informationen) != "") {
+            //Informationen werden ausgeblendet, wenn kein Inhalt vorhanden ist
+            if (removeEmptyTags(currentExercise.informationen) != "") {
 
-            $("#exercise-meta").html(currentExercise.informationen);
+                $("#exercise-meta").html(currentExercise.informationen);
+            }
+
+            //zeigt Antworten der Übung geparst an:
+            let exerciseAnswer = "";
+            exerciseAnswer += "Anzahl Lösungszeilen: " + currentExercise.answerObject.rows + "<br>";
+            if (currentExercise.answerObject.input) exerciseAnswer += "Inputfeld <br>";
+            currentExercise.answerObject.exerciseSolutionArray.forEach(solution => {
+                exerciseAnswer += "<br>";
+                exerciseAnswer += "Antwort: " + solution.loesungString + "<br>";;
+                if (solution.table != undefined) exerciseAnswer += "Tabelle: " + solution.table + "<br>";;
+                if (solution.column != undefined) exerciseAnswer += "Spalte: " + solution.column + "<br>";;
+            });
+            $("#nav-preview #preview-antworten").html(exerciseAnswer);
         }
-        //else
-
-        //zeigt Antworten der Übung geparst an:
-        let exerciseAnswer = "";
-        exerciseAnswer += "Anzahl Lösungszeilen: " + currentExercise.answerObject.rows + "<br>";
-        if (currentExercise.answerObject.input) exerciseAnswer += "Inputfeld <br>";
-        currentExercise.answerObject.exerciseSolutionArray.forEach(solution => {
-            exerciseAnswer += "<br>";
-            exerciseAnswer += "Antwort: " + solution.loesungString + "<br>";;
-            if (solution.table != undefined) exerciseAnswer += "Tabelle: " + solution.table + "<br>";;
-            if (solution.column != undefined) exerciseAnswer += "Spalte: " + solution.column + "<br>";;
-        });
-        $("#nav-preview #preview-antworten").html(exerciseAnswer);
+    } else {
+        resetExercisePreviewView();
     }
 }
 
@@ -849,13 +874,13 @@ function handleDatabaseInfo(tempTables) {
 //function: Befüllt die Textfelder im #nav-edit mit den Inhalten einer Übung
 function fillInfoViewWithInfo() {
     let dbInfo = CURRENT_VERINE_DATABASE.getInfo();
-    
+
     if (!$.isEmptyObject(dbInfo)) {
         $("#txtAuthor").val(dbInfo.autor_name);
         $('#txtAuthorUrl').val(dbInfo.autor_url);
         $('#txtLizenz').summernote('code', dbInfo.lizenz);
         $('#txtInfo').summernote('code', dbInfo.informationen);
-        if(dbInfo.freie_aufgabenwahl == 1)
+        if (dbInfo.freie_aufgabenwahl == 1)
             document.getElementById('radioAufgabeFrei').checked = true;
         else
             document.getElementById('radioAufgabeNichtFrei').checked = true;
@@ -872,7 +897,7 @@ function handleDatabaseExercises(tempTables) {
                 CURRENT_EXERCISE_ID = CURRENT_VERINE_DATABASE.getExercises()[0][0];
             } else {
                 CURRENT_EXERCISE_ID = undefined;
-                createExercise();
+                //createExercise();
             }
             $("#nav-edit-tab").show();
             $("#nav-edit .yes-exercise").show();
@@ -995,29 +1020,29 @@ function createTableDataEdit(columns, values) {
 
     //Pagination Schaltflächen
     let disabledNext = "";
-        let disabledPrevious = "";
-        if (!paginationRight) {
-            disabledNext = "disabled";
-        }
-        if (!paginationLeft) {
-            disabledPrevious = "disabled";
+    let disabledPrevious = "";
+    if (!paginationRight) {
+        disabledNext = "disabled";
+    }
+    if (!paginationLeft) {
+        disabledPrevious = "disabled";
 
 
-        }
-        if (paginationLeft || paginationRight) {
-            newTable += '<ul class="pagination">';
-            newTable += '<li class="page-item ' + disabledPrevious + '">';
-            newTable += '<a class="page-link btnPaginationLeft" href="#" aria-label="Previous">';
-            newTable += '<span aria-hidden="true">&laquo;</span>';
-            newTable += '</a>';
-            newTable += '</li>';
-            newTable += '<li class="page-item ' + disabledNext + '">';
-            newTable += '<a class="page-link btnPaginationRight" href="#" aria-label="Next">';
-            newTable += '<span aria-hidden="true">&raquo;</span>';
-            newTable += '</a>';
-            newTable += '</li>';
-            newTable += '</ul>';
-        }
+    }
+    if (paginationLeft || paginationRight) {
+        newTable += '<ul class="pagination">';
+        newTable += '<li class="page-item ' + disabledPrevious + '">';
+        newTable += '<a class="page-link btnPaginationLeft" href="#" aria-label="Previous">';
+        newTable += '<span aria-hidden="true">&laquo;</span>';
+        newTable += '</a>';
+        newTable += '</li>';
+        newTable += '<li class="page-item ' + disabledNext + '">';
+        newTable += '<a class="page-link btnPaginationRight" href="#" aria-label="Next">';
+        newTable += '<span aria-hidden="true">&raquo;</span>';
+        newTable += '</a>';
+        newTable += '</li>';
+        newTable += '</ul>';
+    }
 
     //newTable += "</table>";
     return newTable;
@@ -1039,7 +1064,7 @@ function checkForUpdates() {
             if (element[0] == sqlIdOfRow) {
                 //check every data of current row
                 for (var i = 0; i < maxColumns; i++) {
-                    if ($("#id_" + i + "_" + tempRow).text() != he.encode(String(element[i]))) { 
+                    if ($("#id_" + i + "_" + tempRow).text() != he.encode(String(element[i]))) {
                         var rowCellValue = he.decode(String($("#id_" + i + "_" + tempRow).text().replaceAll('"', "'")));
                         element[i] = rowCellValue;
                         var columnName = TABLE_COLUMNS[i].name;
