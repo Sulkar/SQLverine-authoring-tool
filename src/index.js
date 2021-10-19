@@ -442,6 +442,7 @@ $(".btnMoveExerciseDown").on("click", function () {
 
 // Select: Tabelle wird ausgewählt
 $('#selTableChooser').on('change', function () {
+    CURRENT_VERINE_DATABASE.setCurrentPagination(0);
     CURRENT_VERINE_DATABASE.prepareTableData(this.value);
     $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
     let tab = new Tab(document.querySelector('#nav-tableEdit-tab'));
