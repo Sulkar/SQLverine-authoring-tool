@@ -272,6 +272,10 @@ div.tab-pane.active {
     /*border-color: lightgrey;*/
 }
 
+.inputPagination{
+    text-align: center;
+    width: 5rem;
+}
 .schemaTable td:first-child {
     padding-left: 0.8em;
 }
