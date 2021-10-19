@@ -358,9 +358,9 @@ $("#btnCreateVerineTable").on('click', function () {
     //create verine_exercise table
     CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_exercises ("id" INTEGER, "reihenfolge" INTEGER NOT NULL, "titel" TEXT NOT NULL, "beschreibung" TEXT NOT NULL, "aufgabenstellung" TEXT NOT NULL, "informationen" TEXT NOT NULL, "antworten" TEXT NOT NULL, "feedback" TEXT NOT NULL, "geloest" INTEGER NOT NULL,	PRIMARY KEY("id" AUTOINCREMENT));');
     //create verine_info table
-    CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_info ("id" INTEGER, "autor_name" TEXT, "autor_url" TEXT, "lizenz"	TEXT, "informationen" TEXT,	PRIMARY KEY("id" AUTOINCREMENT));');
+    CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_info ("id" INTEGER, "autor_name" TEXT, "autor_url" TEXT, "lizenz"	TEXT, "informationen" TEXT, "freie_aufgabenwahl" INTEGER, PRIMARY KEY("id" AUTOINCREMENT));');
     //create verine_info row
-    CURRENT_VERINE_DATABASE.runSqlCode('INSERT INTO verine_info ("id", "autor_name", "autor_url", "lizenz", "informationen") VALUES (1, "", "", "", "");');
+    CURRENT_VERINE_DATABASE.runSqlCode('INSERT INTO verine_info ("id", "autor_name", "autor_url", "lizenz", "informationen", "freie_aufgabenwahl") VALUES (1, "", "", "", "", 0);');
 
     //reinit SqlVerineEditor          
     sqlVerineEditor.reinit();
@@ -646,7 +646,7 @@ function updateExercise() {
 //function: aktualisiert die meta informationen
 function updateInfo() {
     var currentInfo = CURRENT_VERINE_DATABASE.getInfo();
-
+    
     if (!$.isEmptyObject(currentInfo)) {
 
         let infoUpdateArray = [];
@@ -654,6 +654,12 @@ function updateInfo() {
         if (currentInfo.autor_url != $('#txtAuthorUrl').val()) infoUpdateArray.push(["autor_url", $('#txtAuthorUrl').val()]);
         if (currentInfo.lizenz != $('#txtLizenz').summernote('code')) infoUpdateArray.push(["lizenz", $('#txtLizenz').summernote('code')]);
         if (currentInfo.informationen != $('#txtInfo').summernote('code')) infoUpdateArray.push(["informationen", $('#txtInfo').summernote('code')]);
+        if(document.getElementById('radioAufgabeFrei').checked){
+            infoUpdateArray.push(["freie_aufgabenwahl", 1]);
+        }else{
+            infoUpdateArray.push(["freie_aufgabenwahl", 0]);
+        }
+
 
         //gibt es Änderungen?
         if (infoUpdateArray.length > 0) {
@@ -842,11 +848,16 @@ function handleDatabaseInfo(tempTables) {
 //function: Befüllt die Textfelder im #nav-edit mit den Inhalten einer Übung
 function fillInfoViewWithInfo() {
     let dbInfo = CURRENT_VERINE_DATABASE.getInfo();
+    
     if (!$.isEmptyObject(dbInfo)) {
         $("#txtAuthor").val(dbInfo.autor_name);
         $('#txtAuthorUrl').val(dbInfo.autor_url);
         $('#txtLizenz').summernote('code', dbInfo.lizenz);
         $('#txtInfo').summernote('code', dbInfo.informationen);
+        if(dbInfo.freie_aufgabenwahl == 1)
+            document.getElementById('radioAufgabeFrei').checked = true;
+        else
+            document.getElementById('radioAufgabeNichtFrei').checked = true;
     }
 }
 
@@ -982,12 +993,30 @@ function createTableDataEdit(columns, values) {
     newTable += "</tbody></table>";
 
     //Pagination Schaltflächen
-    if (paginationRight) {
-        newTable += "<button class='btnPaginationRight'>weiter</button>"
-    }
-    if (paginationLeft) {
-        newTable += "<button class='btnPaginationLeft'>zurück</button>"
-    }
+    let disabledNext = "";
+        let disabledPrevious = "";
+        if (!paginationRight) {
+            disabledNext = "disabled";
+        }
+        if (!paginationLeft) {
+            disabledPrevious = "disabled";
+
+
+        }
+        if (paginationLeft || paginationRight) {
+            newTable += '<ul class="pagination">';
+            newTable += '<li class="page-item ' + disabledPrevious + '">';
+            newTable += '<a class="page-link btnPaginationLeft" href="#" aria-label="Previous">';
+            newTable += '<span aria-hidden="true">&laquo;</span>';
+            newTable += '</a>';
+            newTable += '</li>';
+            newTable += '<li class="page-item ' + disabledNext + '">';
+            newTable += '<a class="page-link btnPaginationRight" href="#" aria-label="Next">';
+            newTable += '<span aria-hidden="true">&raquo;</span>';
+            newTable += '</a>';
+            newTable += '</li>';
+            newTable += '</ul>';
+        }
 
     //newTable += "</table>";
     return newTable;
