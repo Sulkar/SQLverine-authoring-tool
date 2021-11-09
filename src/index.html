@@ -35,7 +35,7 @@
         <!-- database handling -->
         <div class="row">
             <div class="col">
-                
+
                 <a href="https://sqlverine.org" style="text-decoration: none; color:forestgreen;">
                     <h2 id="headerSql">
                         <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"
@@ -219,7 +219,8 @@
                                 </div>
                             </div>
                             <div class="row edt-row">
-                                <label for="txtInfo" class="col-sm-2 col-form-label">Information zu den Aufgaben:</label>
+                                <label for="txtInfo" class="col-sm-2 col-form-label">Information zu den
+                                    Aufgaben:</label>
                                 <div class="col-sm-10">
                                     <div id="txtInfo" placeholder="Information zu den Aufgaben">
                                     </div>
@@ -243,17 +244,19 @@
                                 <label class="col-sm-2 col-form-label">freie Aufgabenwahl:</label>
                                 <div class="col-sm-10">
                                     <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="radioAufgabeFrei">
+                                        <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                            id="radioAufgabeFrei">
                                         <label class="form-check-label" for="radioAufgabeFrei">
-                                          Ja, Aufgaben können frei ausgewählt werden.
+                                            Ja, Aufgaben können frei ausgewählt werden.
                                         </label>
-                                      </div>
-                                      <div class="form-check">
-                                        <input class="form-check-input" type="radio" name="flexRadioDefault" id="radioAufgabeNichtFrei" checked>
+                                    </div>
+                                    <div class="form-check">
+                                        <input class="form-check-input" type="radio" name="flexRadioDefault"
+                                            id="radioAufgabeNichtFrei" checked>
                                         <label class="form-check-label" for="radioAufgabeNichtFrei">
-                                          Nein, Aufgaben müssen nacheinander gelöst werden.
+                                            Nein, Aufgaben müssen nacheinander gelöst werden.
                                         </label>
-                                      </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -288,7 +291,8 @@
                             <div class="row edt-row">
                                 <label for="txtTitle" class="col-sm-2 col-form-label">Titel:</label>
                                 <div class="col-sm-10">
-                                    <input type="text" class="form-control" id="txtTitle" placeholder="Titel der Aufgabe">
+                                    <input type="text" class="form-control" id="txtTitle"
+                                        placeholder="Titel der Aufgabe">
                                 </div>
                             </div>
                             <div class="row edt-row">
@@ -316,7 +320,8 @@
                             </div>
 
                             <div class="row edt-row">
-                                <label for="txtExcerciseMeta" class="col-sm-2 col-form-label">Hilfreiche Informationen:</label>
+                                <label for="txtExcerciseMeta" class="col-sm-2 col-form-label">Hilfreiche
+                                    Informationen:</label>
                                 <div class="col-sm-10">
                                     <div id="txtExcerciseMeta"
                                         placeholder="Informationen die z.B. Befehle beschreiben...">
@@ -435,26 +440,45 @@
                         </table>
                     </div>
 
-                    <button id="btnAddRow" class="btnSave btn btn btn-outline-primary d-none d-md-inline-block"
-                        data-toggle="tooltip" data-placement="top" title="Download Database">
-                        neue Zeile
-                    </button>
+                    
+                        <ul class="pagination align-middle" style="display: inline-flex; margin-top: 1rem;">
+                            <li class="page-item">
+                                <a class="page-link btnPaginationLeft" href="#" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
+                            </li>
+                            <li class="page-item">
+                                <input class="inputPagination form-control" value="" />
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link btnPaginationRight" href="#" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
+                            </li>
+                        </ul>
+                        
+                        <button id="btnAddRow" class="btnSave btn btn btn-outline-primary d-none d-md-inline-block"
+                            data-toggle="tooltip" data-placement="top" title="neue Zeile">
+                            neue Zeile
+                        </button>
 
-                    <button id="btnSaveData" class="btnSave btn btn-outline-success d-none d-md-inline-block"
-                        data-toggle="tooltip" data-placement="top" title="Download Database">
-                        Daten speichern
-                    </button>
+                        <button id="btnSaveData" class="btnSave btn btn-outline-success d-none d-md-inline-block"
+                            data-toggle="tooltip" data-placement="top" title="Daten speichern">
+                            Daten speichern
+                        </button>
 
-                    <button id="btnAddCsvData" class="btnAddCsvData btn btn-outline-success d-none d-md-inline-block"
-                        data-toggle="tooltip" data-placement="top" title="Download Database">
-                        CSV Daten importieren
-                    </button>
+                        <button id="btnAddCsvData"
+                            class="btnAddCsvData btn btn-outline-success d-none d-md-inline-block" data-toggle="tooltip"
+                            data-placement="top" title="CSV Daten importieren">
+                            CSV Daten importieren
+                        </button>
 
-                    <button id="btnExportCsvData"
-                        class="btnExportCsvData btn btn-outline-success d-none d-md-inline-block" data-toggle="tooltip"
-                        data-placement="top" title="Download Database">
-                        Daten exportieren
-                    </button>
+                        <button id="btnExportCsvData"
+                            class="btnExportCsvData btn btn-outline-success d-none d-md-inline-block"
+                            data-toggle="tooltip" data-placement="top" title="Daten exportieren">
+                            Daten exportieren
+                        </button>
+                    
                 </div>
 
                 <!-- Tab: Datenbank Struktur -->

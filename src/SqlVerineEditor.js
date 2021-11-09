@@ -30,6 +30,7 @@ export class SqlVerineEditor {
         this.SHOW_CODE_SWITCH = true;
         this.SHOW_EXERCISE_TABLE = false;
         this.FORMULAR_DATA;
+        this.CURRENT_SQL_QUERRY = undefined;
     }
 
     //Initialisierung des SqlVerineEditors
@@ -62,10 +63,15 @@ export class SqlVerineEditor {
             this.fillCodeAreaWithCode(unescape(this.URLCODE), this.URL_CURRENT_ID);
         }
     }
-
+    setCurrentSqlQuerry(currentSqlQuerry){
+        this.CURRENT_SQL_QUERRY = currentSqlQuerry;
+    }
+    getCurrentSqlQuerry(){
+        return this.CURRENT_SQL_QUERRY;
+    }
     clearOutputContainer() {
+        $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
         $(this.OUTPUT_CONTAINER).html("");
-        $(this.OUTPUT_CONTAINER_MOBILE).html("");
     }
     setVerineDatabase(verineDatabase) {
         this.CURRENT_VERINE_DATABASE = verineDatabase;
@@ -258,6 +264,7 @@ export class SqlVerineEditor {
         $(sqlVerineEditor.EDITOR_CONTAINER).find("#codeAreaText").on('keydown', 'textarea', function (event) {
             if (event.ctrlKey && event.keyCode === 13) {
                 sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(0);
+                sqlVerineEditor.setCurrentSqlQuerry(undefined);
                 sqlVerineEditor.execSqlCommand(null, "desktop");
                 sqlVerineEditor.RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
                     runFunction();
@@ -403,6 +410,7 @@ export class SqlVerineEditor {
         // Button: run sql command - desktop
         $(sqlVerineEditor.EDITOR_CONTAINER).on('click', '.btnRun', function (event) {
             sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(0);
+            sqlVerineEditor.setCurrentSqlQuerry(undefined);
             sqlVerineEditor.execSqlCommand(null, "desktop");
             sqlVerineEditor.RUN_FUNCTIONS_DESKTOP.forEach(runFunction => {
                 runFunction();
@@ -413,6 +421,7 @@ export class SqlVerineEditor {
             let tempCode = $(sqlVerineEditor.EDITOR_CONTAINER).find(".codeArea.editor pre code").html().trim();
             $(sqlVerineEditor.OUTPUT_CONTAINER_MOBILE).find(".codeArea pre code").html(tempCode);
             sqlVerineEditor.CURRENT_VERINE_DATABASE.setCurrentPagination(0);
+            sqlVerineEditor.setCurrentSqlQuerry(undefined);
             sqlVerineEditor.execSqlCommand(null, "mobile");
             sqlVerineEditor.RUN_FUNCTIONS_MOBILE.forEach(runFunction => {
                 runFunction();
@@ -669,14 +678,19 @@ export class SqlVerineEditor {
     //function: run sql command, type = desktop or mobile
     execSqlCommand(tempSqlCommand, type, pagination) {
 
+        //bereitet den sql Befehl vor
+        if (tempSqlCommand == null && this.CURRENT_SQL_QUERRY == undefined) {
+            tempSqlCommand = this.getSqlQueryText();
+        }else if (tempSqlCommand == null && this.CURRENT_SQL_QUERRY != undefined){
+            tempSqlCommand = this.CURRENT_SQL_QUERRY;
+        }
+
         //erstellt einen LIMIT +1 mit OFFSET Befehl für Pagination (+1 ist wichtig, um zu sehen, ob noch mehr Einträge vorhanden sind)
         const maxLimit = this.CURRENT_VERINE_DATABASE.getMaxLimit();
         const currentPagination = this.CURRENT_VERINE_DATABASE.getCurrentPagination();
-        const tempLimit = " LIMIT " + (maxLimit + 1) + " OFFSET " + (currentPagination * maxLimit);
-
-        //bereitet den sql Befehl vor
-        if (tempSqlCommand == null) {
-            tempSqlCommand = this.getSqlQueryText();
+        let tempLimit = "";
+        if(!tempSqlCommand.toUpperCase().includes("LIMIT")){
+            tempLimit = " LIMIT " + (maxLimit + 1) + " OFFSET " + (currentPagination * maxLimit);
         }
 
         let result = undefined;
@@ -691,8 +705,7 @@ export class SqlVerineEditor {
             }
 
             //löscht alte Ausgabe
-            $(this.OUTPUT_CONTAINER_MOBILE).find(".resultArea").html("");
-            $(this.OUTPUT_CONTAINER).html("");
+            this.clearOutputContainer();
 
             //wurde ein delete, insert, update Befehl ausgeführt?
             let modifiedRows = this.CURRENT_VERINE_DATABASE.database.getRowsModified();

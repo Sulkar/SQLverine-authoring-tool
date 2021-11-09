@@ -485,8 +485,14 @@ $("#btnSaveData").on("click", function () {
 });
 
 //Event: onfocuslost input Pagination
-$(".verineTableEditable").on("focusout", ".inputPagination", function (event) {
-    let inputPaginationMax = parseInt($('.inputPagination').val());
+$(".inputPagination").on("focusout", function (event) {
+    let inputPaginationValue = $('.inputPagination').val();
+    if(isNaN(inputPaginationValue) || inputPaginationValue == ""){
+        inputPaginationValue = 200;
+        $('.inputPagination').val(inputPaginationValue);
+    } 
+
+    let inputPaginationMax = parseInt(inputPaginationValue);
     if (CURRENT_VERINE_DATABASE.getMaxLimit() != inputPaginationMax) {
         if(inputPaginationMax > 10000) {
             inputPaginationMax = 10000;
@@ -997,7 +1003,7 @@ function createTableDataEdit(columns, values) {
     //wenn Testelement die maximale Anzahl der angezeigten Einträge übersteigt, wird es entfernt
     if (values.length > CURRENT_VERINE_DATABASE.getMaxLimit()) {
         values.pop();
-        paginationRight = true;
+        paginationRight = true;        
     }
     if (CURRENT_VERINE_DATABASE.getCurrentPagination() > 0) {
         paginationLeft = true;
@@ -1034,36 +1040,18 @@ function createTableDataEdit(columns, values) {
 
     newTable += "</tbody></table>";
 
-    //Pagination Schaltflächen
-    let disabledNext = "";
-    let disabledPrevious = "";
-    if (!paginationRight) {
-        disabledNext = "disabled";
+    //Pagination Schaltflächen und inputPagination aktualisieren
+    $('.inputPagination').val(CURRENT_VERINE_DATABASE.getMaxLimit());
+    if (paginationRight) {
+        document.getElementsByClassName("btnPaginationRight")[0].parentElement.classList.remove("disabled");
+    }else{
+        document.getElementsByClassName("btnPaginationRight")[0].parentElement.classList.add("disabled");
     }
-    if (!paginationLeft) {
-        disabledPrevious = "disabled";
-
-
-    }
-    
-    newTable += '<ul class="pagination">';
-    newTable += '<li class="page-item ' + disabledPrevious + '">';
-    newTable += '<a class="page-link btnPaginationLeft" href="#" aria-label="Previous">';
-    newTable += '<span aria-hidden="true">&laquo;</span>';
-    newTable += '</a>';
-    newTable += '</li>';
-
-    newTable += '<li class="page-item">';
-    newTable += '<input class="inputPagination form-control" value="' + CURRENT_VERINE_DATABASE.getMaxLimit() + '"/>';
-    newTable += '</li>';
-
-    newTable += '<li class="page-item ' + disabledNext + '">';
-    newTable += '<a class="page-link btnPaginationRight" href="#" aria-label="Next">';
-    newTable += '<span aria-hidden="true">&raquo;</span>';
-    newTable += '</a>';
-    newTable += '</li>';
-    newTable += '</ul>';
-    
+    if (paginationLeft) {
+        document.getElementsByClassName("btnPaginationLeft")[0].parentElement.classList.remove("disabled");
+    }else{
+        document.getElementsByClassName("btnPaginationLeft")[0].parentElement.classList.add("disabled");
+    }   
 
     return newTable;
 
