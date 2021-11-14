@@ -87,6 +87,10 @@
             {
                 "codeComponentClass": ".selAggregate",
                 "codeComponentType": "select"
+            },
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
         ]
     },
@@ -103,6 +107,58 @@
             {
                 "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "SELECT_SELECT_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "SELECT_SELECT_SUBSTR_FUNCTION_1",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "SELECT_SELECT_SUBSTR_FUNCTION_2",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
             }
         ]
     },
@@ -171,7 +227,63 @@
             {
                 "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
+            },
+            {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
             }
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_1_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }           
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_1_SUBSTR_FUNCTION_1", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }     
+        ]
+    },
+    {
+        "selectedSQLElement": "WHERE_1_SUBSTR_FUNCTION_2", 
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
+            }        
         ]
     },
     {
@@ -705,6 +817,10 @@
                 "codeComponentType": "select"
             },
             {
+                "codeComponentClass": ".selStringFunction",
+                "codeComponentType": "select"
+            },
+            {
                 "codeComponentClass": ".btnAsc",
                 "codeComponentType": "button"
             },
@@ -727,6 +843,58 @@
             {
                 "codeComponentClass": ".selColumn",
                 "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "ORDER_1_LENGTH_FUNCTION",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "ORDER_1_SUBSTR_FUNCTION_1",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".selColumn",
+                "codeComponentType": "select"
+            }
+        ]
+    },
+    {
+        "selectedSQLElement": "ORDER_1_SUBSTR_FUNCTION_2",
+        "level": 1,
+        "visibleMainControls": [
+            {
+                "codeComponentClass": ".btnAdd",
+                "codeComponentType": "button"
+            },
+            {
+                "codeComponentClass": ".btnDelete",
+                "codeComponentType": "button"
+            }
+        ],
+        "visibleCodeComponents": [
+            {
+                "codeComponentClass": ".inputValue",
+                "codeComponentType": "input"
             }
         ]
     },
@@ -1527,7 +1695,12 @@
                 "codeComponentType": "button"
             }
         ],
-        "visibleCodeComponents": []
+        "visibleCodeComponents": [            
+            {
+                "codeComponentClass": ".btnCreateForeignKey",
+                "codeComponentType": "button"
+            }
+        ]
     },
     {
         "selectedSQLElement": "CREATE_FOREIGN_KEY_1",

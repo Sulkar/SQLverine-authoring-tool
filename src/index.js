@@ -31,7 +31,6 @@ var CURRENT_VERINE_DATABASE; //aktuell geladene DB
 var DATABASE_ARRAY = [];
 var CURRENT_DATABASE_INDEX = 0;
 var CSS_COLOR_ARRAY = ["coral", "tomato", "orange", "gold", "palegreen", "yellowgreen", "mediumaquamarine", "paleturquoise", "skyblue", "cadetblue", "pink", "hotpink", "orchid", "mediumpurple", "lightvoral"];
-var CHANGED = false;
 //global variables
 var MAX_ROWS = 0;
 var SQL_ID_COLUMN;
@@ -44,8 +43,9 @@ var INSERT_VALUES = []; //[auto, Spalte1, Spalte2, ...]
 var DELETE_VALUES = []; //[sql_id, sql_id, ...]
 
 //Wenn etwas geändert wurde, wird beim Verlassen der Website nachgefragt, ob man die Seite wirklich verlassen will.
-window.onbeforeunload = function () {
-    if (CHANGED) {
+window.onbeforeunload = function () {    
+
+    if (CURRENT_VERINE_DATABASE != undefined && CURRENT_VERINE_DATABASE.getDataChanged()) {
         return "";
     }
 }
@@ -235,7 +235,6 @@ $("#universal-modal-large").on('click', '#btnInsertCSV', function () {
         $("#universal-modal-large #modal-error").html(errorLogArray.error);
     } else {
         $("#universal-modal-large #modal-error").html("");
-        CHANGED = true;
         //update table view
         CURRENT_VERINE_DATABASE.setLastPaginationPage();
         CURRENT_VERINE_DATABASE.prepareTableData(null);
@@ -471,7 +470,6 @@ $("#btnSaveData").on("click", function () {
     if (CURRENT_VERINE_DATABASE.persist().length > 0) {
         console.log("error persist");
     } else {
-        CHANGED = true;
         //update table view
         CURRENT_VERINE_DATABASE.setLastPaginationPage();
         CURRENT_VERINE_DATABASE.prepareTableData(null);
@@ -535,7 +533,6 @@ $('#nav-tableEdit').on('click', '.btnPaginationRight', function (event) {
     if (CURRENT_VERINE_DATABASE.persist().length > 0) {
         console.log("error persist");
     } else {
-        CHANGED = true;
         CURRENT_VERINE_DATABASE.prepareTableData(null);
         $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
     }
@@ -548,7 +545,6 @@ $('#nav-tableEdit').on('click', '.btnPaginationLeft', function (event) {
     if (CURRENT_VERINE_DATABASE.persist().length > 0) {
         console.log("error persist");
     } else {
-        CHANGED = true;
         CURRENT_VERINE_DATABASE.prepareTableData(null);
         $(".verineTableEditable").html(createTableDataEdit(CURRENT_VERINE_DATABASE.columns, CURRENT_VERINE_DATABASE.values));
     }
@@ -659,7 +655,6 @@ function updateExercise() {
         if (currentExercise.feedback != $('#txtFeedback').summernote('code')) exerciseUpdateArray.push([CURRENT_EXERCISE_ID, "feedback", $('#txtFeedback').summernote('code')]);
         //gibt es Änderungen?
         if (exerciseUpdateArray.length > 0) {
-            CHANGED = true;
             CURRENT_VERINE_DATABASE.updateExercise(exerciseUpdateArray);
         }
 

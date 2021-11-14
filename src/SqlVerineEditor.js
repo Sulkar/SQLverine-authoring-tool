@@ -11,6 +11,7 @@ export class SqlVerineEditor {
         this.NEXT_ELEMENT_NR = 0;
         this.CURRENT_SELECTED_ELEMENT = undefined;
         this.CURRENT_SELECTED_SQL_ELEMENT = "START";
+        this.SQL_ELEMENT_MAP = new Map();
         this.ACTIVE_CODE_VIEW_DATA;
         this.CURRENT_VERINE_DATABASE;
         this.USED_TABLES = [];
@@ -400,6 +401,11 @@ export class SqlVerineEditor {
                     sqlVerineEditor.CURRENT_SELECTED_ELEMENT.replaceWith(sqlVerineEditor.addAggregat(tempSelectField));
                     sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
                 }
+                // -> selStringFunction
+                else if ($(tempSelectField).hasClass("selStringFunction")) {
+                    sqlVerineEditor.CURRENT_SELECTED_ELEMENT.replaceWith(sqlVerineEditor.addStringFunction(tempSelectField));
+                    sqlVerineEditor.setSelection(sqlVerineEditor.NEXT_ELEMENT_NR, false);
+                }
             }
             // aktualisiert alle .selColumn <select>
             sqlVerineEditor.updateSelectCodeComponents(sqlVerineEditor);
@@ -613,6 +619,26 @@ export class SqlVerineEditor {
         return tempElement;
     }
 
+    //function: Sucht alle aktuellen SQL Elemente im aktiven Editor und sammelt diese in einer Map, um feststellen zu können welche Elemente zu oft vorkommen
+    updateSqlElementMap(){        
+        let tempMap = new Map();        
+        //get all Elements inside codeArea by class
+        let elements = this.EDITOR_CONTAINER.querySelectorAll(".codeArea .synSQL");
+        elements.forEach(element => {
+            let tempCounter = 1;
+            let elementType = element.getAttribute("data-sql-element");
+            if(tempMap.has(elementType)){
+                tempCounter = tempMap.get(elementType) + 1;
+                tempMap.set(elementType, tempCounter);
+            }else{
+                tempMap.set(elementType, tempCounter);
+            }        
+        });
+        
+        console.log(tempMap)
+        this.SQL_ELEMENT_MAP = tempMap;
+    }
+
     //function: add new line <span>
     addNewLine() {
         let tempLeerzeichen = "<span class='codeElement_" + this.NR + " newline'><br></span>";
@@ -709,6 +735,7 @@ export class SqlVerineEditor {
 
             //wurde ein delete, insert, update Befehl ausgeführt?
             let modifiedRows = this.CURRENT_VERINE_DATABASE.database.getRowsModified();
+            let tablesChanged = false;
             if (modifiedRows > 0) {
 
                 let deleteSQL = tempSqlCommand.match(/(DELETE FROM)\s(\w+)/i);
@@ -717,12 +744,15 @@ export class SqlVerineEditor {
 
                 if (insertSQL != null && insertSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + insertSQL[2] + " eingefügt.</h5><br>");
+                    tablesChanged = true;
                     result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + insertSQL[2] + tempLimit);
                 } else if (updateSQL != null && updateSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden in der Tabelle: " + updateSQL[2] + " aktualisiert.</h5><br>");
+                    tablesChanged = true;
                     result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + updateSQL[2] + tempLimit);
                 } else if (deleteSQL != null && deleteSQL.length > 0) {
                     $(this.OUTPUT_CONTAINER).append("<h5>" + modifiedRows + " Zeilen wurden aus der Tabelle: " + deleteSQL[2] + " gelöscht.</h5><br>");
+                    tablesChanged = true;
                     result = this.CURRENT_VERINE_DATABASE.database.exec("SELECT * FROM " + deleteSQL[2] + tempLimit);
                 }
             }
@@ -731,7 +761,6 @@ export class SqlVerineEditor {
             let dropTableSQL = tempSqlCommand.match(/(DROP TABLE)\s(\w+)/i);
             let createTableSQL = tempSqlCommand.match(/(CREATE TABLE)\s['"](\w+)['"]/i);
             let alterTableSQL = tempSqlCommand.match(/(ALTER TABLE)\s(\w+)/i);
-            let tablesChanged = false;
 
             if (dropTableSQL != null && dropTableSQL.length > 0) {
                 $(this.OUTPUT_CONTAINER).append("<h5>Die Tabelle: " + dropTableSQL[2] + " wurde gelöscht.</h5><br>");
@@ -747,6 +776,7 @@ export class SqlVerineEditor {
             //Datenbankschema wird aktualisiert, wenn sich etwas an den Tabellen geändert hat
             if (tablesChanged) {
                 $(this.SCHEMA_CONTAINER).html(this.CURRENT_VERINE_DATABASE.createTableInfo("1,2"));
+                this.CURRENT_VERINE_DATABASE.setDataChanged(true);
             }
 
             //erstellt eine Tabelle mit den Ergebnissen
@@ -886,7 +916,8 @@ export class SqlVerineEditor {
                 if ($(self).hasClass(element)) {
                     isTableActive = true;
                     let updatedFieldNameBasedOnTableCount = $(self).html().replace(element + ".", "");
-                    if (sqlVerineEditor.USED_TABLES.length > 1) {
+                    //wenn mehr als zwei Spalten genutzt werden und es sich um kein CREATE_FOREIGN_KEY Element handelt, wird die Tabelle an die Spalte angehängt. Z.B.: schueler.id
+                    if (sqlVerineEditor.USED_TABLES.length > 1 && !sqlVerineEditor.CURRENT_SELECTED_SQL_ELEMENT.includes("CREATE_FOREIGN_KEY")) {
                         $(self).html(element + "." + updatedFieldNameBasedOnTableCount);
                     } else {
                         $(self).html(updatedFieldNameBasedOnTableCount);
@@ -991,6 +1022,38 @@ export class SqlVerineEditor {
         return tempAggregat;
     }
 
+    //function: adds an String Function <span> with inputField/inputFields
+    addStringFunction(tempSelectField) {
+        let classesFromCodeComponent = this.getClassesFromElementAsString(tempSelectField);
+        let tempSqlElement = this.CURRENT_SELECTED_ELEMENT.attr("data-sql-element");
+
+        let tempStringFunction = "";
+        if (this.CURRENT_SELECTED_ELEMENT.hasClass("extended")) {
+            tempStringFunction += "<span class='codeElement_" + this.NR + " " + classesFromCodeComponent + " inputField sqlIdentifier extended' data-sql-element='" + tempSqlElement + "'>" + tempSelectField.value + "(";
+        } else {
+            tempStringFunction += "<span class='codeElement_" + this.NR + " " + classesFromCodeComponent + " inputField sqlIdentifier root' data-sql-element='" + tempSqlElement + "'>" + tempSelectField.value + "(";
+        }
+        this.NR++;
+        
+        //String Function: LENGTH (___)
+        if(tempSelectField.value == "LENGTH"){
+            tempStringFunction += this.addInputField(tempSqlElement + "_LENGTH_FUNCTION", "root");
+            tempStringFunction += ")</span>";
+        }
+        //String Function: SUBSTR (___, ___) or (___, ___, ___)
+        else if(tempSelectField.value == "SUBSTR"){
+            let tempNextElementNr = 0;
+            tempStringFunction += this.addInputField(tempSqlElement + "_SUBSTR_FUNCTION_1", "root");
+            tempNextElementNr = this.NEXT_ELEMENT_NR;
+            tempStringFunction += this.addLeerzeichenMitKomma();
+            tempStringFunction += this.addInputField(tempSqlElement + "_SUBSTR_FUNCTION_2", "root");
+            tempStringFunction += ")</span>";
+            this.NEXT_ELEMENT_NR = tempNextElementNr;
+        }
+
+        return tempStringFunction;
+    }
+
     //function: überprüft den eingegebenen Code und passt diesen ggf. an
     cleanSQLCode() {
         //sucht alle Elemente mit Klasse .createComma und fügt im .komma span ein Komma hinzu
@@ -1058,7 +1121,7 @@ export class SqlVerineEditor {
     //function: set Selection to an Element
     setSelection(elementNr, removeLastSelectedElement) {
         let element;
-
+        this.updateSqlElementMap();
         //no number is given -> get next unfilled inputField
         if (elementNr == "next") {
             this.CURRENT_SELECTED_ELEMENT.removeClass("unfilled");
@@ -1337,6 +1400,9 @@ export class SqlVerineEditor {
                 break;
             case ".selAggregate":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selAggregate synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Aggregatsfunktion wählen</option><option value="AVG">AVG ( ___ )</option><option value="COUNT">COUNT ( ___ )</option><option value="MIN">MIN ( ___ )</option><option value="MAX">MAX ( ___ )</option><option value="SUM">SUM ( ___ )</option></select>');
+                break;
+            case ".selStringFunction":
+                $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<select class="selStringFunction synSQL sqlSelect codeSelect"><option value="" disabled selected hidden>Stringfunktion wählen</option><option value="LENGTH">LENGTH ( ___ )</option><option value="SUBSTR">SUBSTR ( ___, ___ )</option></select>');
                 break;
             case ".btnAND":
                 $(this.EDITOR_CONTAINER).find(".buttonArea.codeComponents").append('<button class="btnAND synSQL sqlWhere codeButton">AND</button>');
