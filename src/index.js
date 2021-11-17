@@ -755,10 +755,12 @@ function fillPreviewViewWithExercise() {
             $("#nav-preview .exercise-task").html(currentExercise.aufgabenstellung);
             $("#nav-preview #exercise-feedback").html(currentExercise.feedback);
 
+            $("#nav-preview #exercise-meta").html(currentExercise.informationen);
             //Informationen werden ausgeblendet, wenn kein Inhalt vorhanden ist
-            if (removeEmptyTags(currentExercise.informationen) != "") {
-
-                $("#exercise-meta").html(currentExercise.informationen);
+            if (removeEmptyTags(currentExercise.informationen) == "") {
+                $("#accordionExerciseMeta").hide();
+            } else {
+                $("#accordionExerciseMeta").show();
             }
 
             //zeigt Antworten der Übung geparst an:

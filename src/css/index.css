@@ -417,3 +417,8 @@ button.nav-link:hover {
     font-size: 1.1em;
     color: slategrey;
 }
+
+#accordionExerciseMeta{
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
