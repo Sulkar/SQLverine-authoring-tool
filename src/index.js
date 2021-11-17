@@ -356,6 +356,10 @@ $("#nav-tab button").click(function () {
 $("#btnCreateVerineTable").on('click', function () {
     //create verine_exercise table
     CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_exercises ("id" INTEGER, "reihenfolge" INTEGER NOT NULL, "titel" TEXT NOT NULL, "beschreibung" TEXT NOT NULL, "aufgabenstellung" TEXT NOT NULL, "informationen" TEXT NOT NULL, "antworten" TEXT NOT NULL, "feedback" TEXT NOT NULL, "geloest" INTEGER NOT NULL,	PRIMARY KEY("id" AUTOINCREMENT));');
+    //create first empty exercise
+    CURRENT_EXERCISE_ID = undefined;
+    createExercise();
+
     //create verine_info table
     CURRENT_VERINE_DATABASE.runSqlCode('CREATE TABLE verine_info ("id" INTEGER, "autor_name" TEXT, "autor_url" TEXT, "lizenz"	TEXT, "informationen" TEXT, "freie_aufgabenwahl" INTEGER, PRIMARY KEY("id" AUTOINCREMENT));');
     //create verine_info row
@@ -388,6 +392,7 @@ $("#btnSaveEdit").on("click", function () {
 
 //Button: neue Übung
 $(".btnNewExercise").on("click", function () {
+    updateExercise();
     createExercise();
     fillExerciseSelect(CURRENT_EXERCISE_ID);
     fillEditViewWithExercise();
