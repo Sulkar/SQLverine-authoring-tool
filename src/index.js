@@ -372,6 +372,8 @@ $("#btnCreateVerineTable").on('click', function () {
     updateTableChooser(tempTables[0], tempTables);
     handleDatabaseExercises(tempTables);
     handleDatabaseInfo(tempTables);
+    //Informationen zur Datenbank Editor wird mit Schaltfläche "Zur Aufgabe" vorbefüllt.
+    $('#txtInfo').summernote('code', '<br><div class="text-center"><button id="btnGotoExerciseTab" class=" btn btn-outline-success " data-toggle="tooltip" data-placement="top">zur Aufgabe</button></div>');
 });
 
 //Button: Speichern Info
