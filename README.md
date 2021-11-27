@@ -1,3 +1,6 @@
+# Das SQLverine Autorenwerkzeug wurde mit dem SQLverine Editor zusammengelegt
+Siehe: [SQLverine](https://github.com/Sulkar/SQLverine)
+
 # SQLverine-authoring-tool
 <img src="src/images/sqlVerineAuthoringTool.png" width="400px" />
 
